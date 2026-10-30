@@ -12,6 +12,7 @@ const MARKS = ['', '/', '✕', '⊗'];
   template: `
     @if (state(); as s) {
       <div class="layout">
+        <div class="side">
         <div class="score">
           @switch (s.config.mode) {
             @case ('x01') {
@@ -75,6 +76,11 @@ const MARKS = ['', '/', '✕', '⊗'];
             }
           }
         </div>
+          <div class="actions">
+            <button type="button" (click)="game.undo()" [disabled]="!game.canUndo()">⟲ Undo</button>
+            <button type="button" (click)="game.throwDart({ n: 0, m: 0 })">Miss</button>
+          </div>
+        </div>
 
         <div class="input">
           <div class="turn">
@@ -92,10 +98,6 @@ const MARKS = ['', '/', '✕', '⊗'];
             }
           </div>
           <div class="board"><app-dartboard (thrown)="game.throwDart($event)" /></div>
-          <div class="actions">
-            <button type="button" (click)="game.undo()" [disabled]="!game.canUndo()">⟲ Undo</button>
-            <button type="button" (click)="game.throwDart({ n: 0, m: 0 })">Miss</button>
-          </div>
         </div>
       </div>
 
@@ -128,7 +130,8 @@ const MARKS = ['', '/', '✕', '⊗'];
   styles: `
     :host { display: block; height: 100%; }
     .layout { display: grid; grid-template-columns: minmax(0, .75fr) minmax(0, 1.5fr); gap: .75rem; padding: 1rem; height: 100%; }
-    .score { display: flex; flex-direction: column; gap: .5rem; overflow-y: auto; min-height: 0; }
+    .side { display: flex; flex-direction: column; gap: .5rem; min-height: 0; min-width: 0; }
+    .score { display: flex; flex-direction: column; gap: .5rem; overflow-y: auto; min-height: 0; flex: 1; }
     .card { background: var(--surface); border: 3px solid transparent; border-radius: 12px; padding: .4rem .75rem; }
     .card.active { border-color: var(--accent); }
     .top { display: flex; justify-content: space-between; align-items: baseline; }
@@ -154,7 +157,7 @@ const MARKS = ['', '/', '✕', '⊗'];
     .chip { background: var(--surface); padding: .35rem .8rem; border-radius: 999px; font-weight: 700; min-width: 3rem; text-align: center; }
     .chip.empty { opacity: .35; }
     .last { color: var(--muted); font-size: .85rem; flex-basis: 100%; }
-    .actions { display: flex; gap: .5rem; }
+    .actions { display: flex; gap: .5rem; flex: none; }
     .actions button { flex: 1; padding: .9rem; font-size: 1.1rem; min-height: 44px; }
     .overlay { position: fixed; inset: 0; background: #000b; display: grid; place-items: center; padding: 1rem; z-index: 10; }
     .dialog { background: var(--surface); border-radius: 18px; padding: 1.5rem; max-width: 460px; width: 100%; max-height: 90dvh; overflow-y: auto; }
@@ -167,7 +170,8 @@ const MARKS = ['', '/', '✕', '⊗'];
     /* Overrides below must stay last: same specificity as the base rules above. */
     @media (max-aspect-ratio: 1/1) {
       .layout { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr); gap: .5rem; padding: .5rem; }
-      .score { flex-direction: row; flex-wrap: wrap; max-height: 28dvh; align-content: flex-start; gap: .5rem; }
+      .side { gap: .4rem; }
+      .score { flex-direction: row; flex-wrap: wrap; flex: none; max-height: 28dvh; align-content: flex-start; gap: .5rem; }
       .card { flex: 1 1 8rem; padding: .3rem .6rem; }
       .cricket { font-size: clamp(.9rem, 2.8dvh, 1.2rem); }
       .cricket th, .cricket td { padding: .25rem; }
@@ -183,12 +187,6 @@ const MARKS = ['', '/', '✕', '⊗'];
       .cricket th, .cricket td { padding: .2rem; }
       .dialog { padding: 1rem; }
       .dialog h2 { margin-bottom: .5rem; }
-    }
-    @media (max-height: 500px) and (min-aspect-ratio: 1/1) {
-      .input { display: grid; grid-template-columns: minmax(0, 1fr) 7.5rem; grid-template-rows: auto minmax(0, 1fr); column-gap: .5rem; }
-      .turn { grid-column: 1 / -1; }
-      .actions { flex-direction: column; justify-content: center; }
-      .actions button { flex: none; }
     }
   `,
 })
