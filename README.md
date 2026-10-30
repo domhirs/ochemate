@@ -4,6 +4,7 @@ dartzn is a self-hosted dart scorer for a tablet. Tap the on-screen board to sco
 
 - Games: X01 (301/501/701, double-in, straight/double/master-out, legs, sets and deciding-set tie-break), Cricket, Around the Clock
 - Checkout suggestions, 3-dart average, 180 counter, undo
+- Saved players with stats: matches, wins, 180s, averages, checkout %, best leg
 - Match history and per-player stats (stored in SQLite on the server)
 - Installable PWA, current game survives reloads
 

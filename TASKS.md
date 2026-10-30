@@ -20,7 +20,7 @@ Status: `[ ]` open, `[~]` in progress, `[x]` done.
 | 14  | [x]    | Make the double and triple rings bigger so they are easier to tap                                              |
 | 15  | [x]    | Make the bullseye (single and double bull) bigger                                                              |
 | 16  | [x]    | Permanent players: saved player profiles, pick them in setup, link matches to them                              |
-| 17  | [ ]    | Player stats: matches, wins, notable visits (180 / 140+ / 100+), averages, sortable Players overview             |
+| 17  | [x]    | Player stats: matches, wins, notable visits (180 / 140+ / 100+), averages, sortable Players overview             |
 
 ## Details
 
@@ -145,3 +145,4 @@ Acceptance:
 - Averages (x01): 3-dart average, first-9 average, checkout % (visits started in checkout range that finished the leg), highest checkout, best leg (fewest darts), average darts per leg won.
 - Players overview sortable by matches, wins, win %, 180s, average.
 - Stats are derived by replaying match darts, nothing new is stored.
+- Limits: stats use the 500 most recent matches the server returns; guests and matches played before profiles are not counted. Cricket and Around the Clock only count matches and wins.
