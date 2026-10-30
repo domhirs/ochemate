@@ -265,32 +265,43 @@ function dartCost(d: Dart, last: boolean, out: OutMode): number {
   return d.m === 1 ? 2 : 4;
 }
 
-const checkoutCache = new Map<string, Dart[] | null>();
+const checkoutCache = new Map<string, Dart[][]>();
 
-export function checkoutRoute(remaining: number, dartsLeft: number, out: OutMode): Dart[] | null {
-  if (remaining < 2 || remaining > 170 || dartsLeft < 1) return null;
-  const key = `${remaining}|${dartsLeft}|${out}`;
-  if (checkoutCache.has(key)) return checkoutCache.get(key)!;
+const orderKey = (d: Dart): number => d.n * 10 + d.m;
 
-  let best: Dart[] | null = null;
-  let bestCost = Infinity;
+/** Up to `limit` routes, best first. Non-finishing darts are kept in descending order so T20 T18 and T18 T20 are not both listed. */
+export function checkoutRoutes(remaining: number, dartsLeft: number, out: OutMode, limit = 5): Dart[][] {
+  if (remaining < 2 || remaining > 170 || dartsLeft < 1) return [];
+  const key = `${remaining}|${dartsLeft}|${out}|${limit}`;
+  const cached = checkoutCache.get(key);
+  if (cached) return cached;
+
+  const found: { path: Dart[]; cost: number }[] = [];
   const minLeft = out === 'straight' ? 1 : 2;
 
   const search = (rem: number, left: number, path: Dart[], cost: number): void => {
+    const prev = path[path.length - 1];
     for (const d of CHECKOUT_DARTS) {
       const next = rem - d.n * d.m;
-      const total = cost + dartCost(d, next === 0, out) + 10;
       if (next === 0) {
-        if (validOut(out, d) && total < bestCost) {
-          bestCost = total;
-          best = [...path, d];
+        if (validOut(out, d)) found.push({ path: [...path, d], cost: cost + dartCost(d, true, out) + 10 });
+      } else if (left > 1 && next >= minLeft) {
+        if (prev) {
+          const diff = prev.n * prev.m - d.n * d.m;
+          if (diff < 0 || (diff === 0 && orderKey(prev) < orderKey(d))) continue;
         }
-      } else if (left > 1 && next >= minLeft && total < bestCost) {
-        search(next, left - 1, [...path, d], total);
+        search(next, left - 1, [...path, d], cost + dartCost(d, false, out) + 10);
       }
     }
   };
   search(remaining, dartsLeft, [], 0);
-  checkoutCache.set(key, best);
-  return best;
+
+  found.sort((x, y) => x.cost - y.cost);
+  const routes = found.slice(0, limit).map((f) => f.path);
+  checkoutCache.set(key, routes);
+  return routes;
+}
+
+export function checkoutRoute(remaining: number, dartsLeft: number, out: OutMode): Dart[] | null {
+  return checkoutRoutes(remaining, dartsLeft, out, 1)[0] ?? null;
 }

@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { Dartboard } from './dartboard';
 import { GameService } from './game.service';
-import { ATC_SEQUENCE, CRICKET_NUMBERS, Dart, checkoutRoute, dartLabel, threeDartAvg } from './game-logic';
+import { ATC_SEQUENCE, CRICKET_NUMBERS, Dart, checkoutRoutes, dartLabel, threeDartAvg } from './game-logic';
 
 const MARKS = ['', '/', '✕', '⊗'];
 
@@ -37,8 +37,12 @@ const MARKS = ['', '/', '✕', '⊗'];
                       <span class="chip" [class.empty]="l === null">{{ l ?? '–' }}</span>
                     }
                   </div>
-                  @if (i === s.current && s.winner === null && checkout(); as route) {
-                    <div class="route">{{ route }}</div>
+                  @if (i === s.current && s.winner === null && checkouts().length) {
+                    <div class="routes">
+                      @for (route of checkouts(); track route) {
+                        <span class="route">{{ route }}</span>
+                      }
+                    </div>
                   }
                 </div>
               }
@@ -175,7 +179,9 @@ const MARKS = ['', '/', '✕', '⊗'];
     .legs { color: var(--accent); font-weight: 700; }
     .big { font-size: clamp(1.8rem, min(6vw, 8dvh), 3.2rem); font-weight: 800; line-height: 1.05; font-variant-numeric: tabular-nums; }
     .meta { display: flex; gap: 1rem; color: var(--muted); font-size: .8rem; }
-    .route { margin-top: .2rem; font-size: .9rem; color: var(--accent); font-weight: 700; letter-spacing: .03em; }
+    .routes { display: flex; flex-wrap: wrap; gap: .1rem .9rem; margin-top: .2rem; font-size: .9rem; letter-spacing: .03em; }
+    .route { color: var(--muted); font-weight: 600; white-space: nowrap; }
+    .route:first-child { color: var(--accent); font-weight: 700; }
     .bar { height: 8px; background: #0003; border-radius: 4px; margin: .25rem 0 .5rem; overflow: hidden; }
     .bar div { height: 100%; background: var(--accent); }
     .cricket { width: 100%; border-collapse: collapse; background: var(--surface); text-align: center; font-size: 1.2rem; }
@@ -244,13 +250,12 @@ export class Game {
   protected readonly cricketNumbers = CRICKET_NUMBERS;
   protected readonly atcLength = ATC_SEQUENCE.length;
 
-  protected readonly checkout = computed(() => {
+  protected readonly checkouts = computed(() => {
     const s = this.state();
-    if (!s || s.config.mode !== 'x01') return null;
+    if (!s || s.config.mode !== 'x01') return [];
     const p = s.players[s.current];
-    if (s.config.x01.doubleIn && !p.opened) return null;
-    const route = checkoutRoute(p.score, 3 - s.turn.length, s.config.x01.out);
-    return route ? route.map(dartLabel).join('  ') : null;
+    if (s.config.x01.doubleIn && !p.opened) return [];
+    return checkoutRoutes(p.score, 3 - s.turn.length, s.config.x01.out).map((r) => r.map(dartLabel).join('  '));
   });
 
   /** Per player: darts of their latest turn. Stays until that player throws again. */
