@@ -14,6 +14,7 @@ Status: `[ ]` open, `[~]` in progress, `[x]` done.
 | 8   | [x]    | Add sets to game setup (set/leg modes like the PDC World Championship)                                        |
 | 9   | [x]    | TV-style match overview graphic under the players, reflecting the game setup (e.g. first to 3 sets, 3 legs per set) |
 | 10  | [x]    | Optional deciding-set tie-break (two clear legs, sudden death at 5-5) like the PDC World Championship        |
+| 11  | [x]    | "ONE HUNDRED AND EIGHTY!" celebration animation when a player hits a 180                                    |
 
 ## Details
 
@@ -89,3 +90,11 @@ Acceptance:
 - Normal sets unchanged (3-2 wins a first-to-3 set).
 - Overview and History show the tie-break in the format text; the set winner is the higher leg count in each set column.
 - Re-verify legs/sets logic (see #8) after touching game-logic.ts.
+
+### 11. 180 celebration
+
+- Full-screen animation "ONE HUNDRED AND EIGHTY!" with the player name when a throw completes a 180 (x01 turn total).
+- Fired only by a live throw: not on undo, replay, page reload or history view.
+- Must not block input: next player can already throw while it plays (pointer-events: none). About 3 s.
+- Respects `prefers-reduced-motion` (plain fade, no rotation/confetti).
+- Pure CSS animation, no assets and no new dependencies. Sound is not included.

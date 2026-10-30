@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { Dartboard } from './dartboard';
 import { MatchOverview } from './match-overview';
+import { OneEighty } from './one-eighty';
 import { GameService } from './game.service';
 import { ATC_SEQUENCE, CRICKET_NUMBERS, Dart, checkoutRoutes, dartLabel, setsToWin, threeDartAvg } from './game-logic';
 
@@ -8,7 +9,7 @@ const MARKS = ['', '/', '✕', '⊗'];
 
 @Component({
   selector: 'app-game',
-  imports: [Dartboard, MatchOverview],
+  imports: [Dartboard, MatchOverview, OneEighty],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     @if (state(); as s) {
@@ -112,6 +113,10 @@ const MARKS = ['', '/', '✕', '⊗'];
           <div class="board"><app-dartboard (thrown)="game.throwDart($event)" /></div>
         </div>
       </div>
+
+      @for (c of game.celebrations(); track c.id) {
+        <app-one-eighty [name]="c.name" />
+      }
 
       @if (showHistory()) {
         <div class="overlay" (click)="showHistory.set(false)">

@@ -2,6 +2,13 @@ import { Injectable, computed, inject, signal } from '@angular/core';
 import { Api } from './api';
 import { Dart, MatchConfig, buildHistory, defaultConfig, replay } from './game-logic';
 
+export interface Celebration {
+  id: number;
+  name: string;
+}
+
+const CELEBRATION_MS = 3000;
+
 export type View = 'setup' | 'game' | 'history';
 
 const SAVE_KEY = 'dartboard.current';
@@ -38,6 +45,10 @@ export class GameService {
   readonly lastConfig = signal<MatchConfig>(load<MatchConfig>(CONFIG_KEY) ?? defaultConfig());
   /** Server save outcome for the finished match: null = not attempted yet. */
   readonly saveOk = signal<boolean | null>(null);
+
+  /** Live 180 celebrations only: set by a real throw, never by replay, reload or undo. */
+  readonly celebrations = signal<Celebration[]>([]);
+  private celebrationId = 0;
 
   private readonly config = signal<MatchConfig | null>(null);
   private readonly darts = signal<Dart[]>([]);
@@ -90,13 +101,18 @@ export class GameService {
   throwDart(d: Dart): void {
     const s = this.state();
     if (!s || s.winner !== null) return;
+    const thrower = s.current;
+    const before = s.players[thrower].oneEighties;
     this.darts.update((list) => [...list, d]);
     this.persist();
-    if (this.state()!.winner !== null) void this.finish();
+    const after = this.state()!;
+    if (after.players[thrower].oneEighties > before) this.celebrate(after.players[thrower].name);
+    if (after.winner !== null) void this.finish();
   }
 
   undo(): void {
     if (!this.darts().length) return;
+    this.celebrations.set([]);
     this.darts.update((list) => list.slice(0, -1));
     if (this.saved) {
       // Undoing a finished match: drop the stored result so the corrected one saves under a fresh id.
@@ -109,7 +125,14 @@ export class GameService {
   }
 
   leave(): void {
+    this.celebrations.set([]);
     this.view.set('setup');
+  }
+
+  private celebrate(name: string): void {
+    const id = ++this.celebrationId;
+    this.celebrations.update((l) => [...l, { id, name }]);
+    setTimeout(() => this.celebrations.update((l) => l.filter((c) => c.id !== id)), CELEBRATION_MS);
   }
 
   private async finish(): Promise<void> {
