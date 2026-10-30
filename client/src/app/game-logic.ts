@@ -15,6 +15,8 @@ export interface X01Options {
   legs: number;
   /** Sets needed to win the match. Missing in matches saved before sets existed = 1. */
   sets?: number;
+  /** Deciding set needs a 2-leg lead, with a sudden-death leg once both reach 2*legs-1 (PDC World Championship). */
+  tieBreak?: boolean;
 }
 
 export const setsToWin = (o: X01Options): number => o.sets ?? 1;
@@ -117,6 +119,19 @@ function validOut(out: OutMode, d: Dart): boolean {
   return d.m >= 2;
 }
 
+/** 2-player match where both players are one set from winning (the tie-break only applies there). */
+function isDecidingSet(s: GameState, o: X01Options): boolean {
+  const target = setsToWin(o);
+  return !!o.tieBreak && target > 1 && s.players.length === 2 && s.players.every((q) => q.sets === target - 1);
+}
+
+function wonSet(s: GameState, p: PlayerState, o: X01Options): boolean {
+  if (p.legs < o.legs) return false;
+  if (!isDecidingSet(s, o)) return true;
+  const other = Math.max(...s.players.filter((q) => q !== p).map((q) => q.legs));
+  return p.legs - other >= 2 || p.legs >= 2 * o.legs;
+}
+
 function endTurn(s: GameState, total: number, bust: boolean): void {
   s.lastTurn = { player: s.current, darts: s.turn, total, bust };
   s.turn = [];
@@ -167,7 +182,7 @@ function applyX01(s: GameState, p: PlayerState, d: Dart): void {
   p.highCheckout = Math.max(p.highCheckout, total);
   p.legs++;
   s.lastTurn = { player: s.current, darts: s.turn, total, bust: false };
-  if (p.legs >= o.legs) {
+  if (wonSet(s, p, o)) {
     s.setLog.push(s.players.map((q) => q.legs));
     p.sets++;
     if (p.sets >= setsToWin(o)) {

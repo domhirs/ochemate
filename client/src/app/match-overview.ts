@@ -40,7 +40,7 @@ const OUT_LABEL = { straight: 'straight out', double: 'double out', master: 'mas
               </th>
               @if (sets() > 1) {
                 @for (r of s.setLog; track $index) {
-                  <td [class.won]="r[i] >= s.config.x01.legs">{{ r[i] }}</td>
+                  <td [class.won]="won(r, i)">{{ r[i] }}</td>
                 }
                 @if (s.winner === null) {
                   <td class="cur">{{ p.legs }}</td>
@@ -79,12 +79,17 @@ const OUT_LABEL = { straight: 'straight out', double: 'double out', master: 'mas
 export class MatchOverview {
   readonly state = input.required<GameState>();
 
+  protected won(legs: number[], i: number): boolean {
+    return legs.every((l, j) => j === i || l < legs[i]);
+  }
+
   protected readonly sets = computed(() => setsToWin(this.state().config.x01));
   protected readonly out = computed(() => OUT_LABEL[this.state().config.x01.out]);
   protected readonly format = computed(() => {
     const o = this.state().config.x01;
     const sets = setsToWin(o);
     const legs = `${o.legs} ${o.legs === 1 ? 'leg' : 'legs'}`;
-    return sets > 1 ? `First to ${sets} sets · ${legs} per set` : `First to ${legs}`;
+    if (sets === 1) return `First to ${legs}`;
+    return `First to ${sets} sets · ${legs} per set${o.tieBreak && this.state().players.length === 2 ? ' · decider by 2 legs' : ''}`;
   });
 }

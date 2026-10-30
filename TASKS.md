@@ -13,6 +13,7 @@ Status: `[ ]` open, `[~]` in progress, `[x]` done.
 | 7   | [x]    | Show a list of possible checkout paths when a player is in range                                             |
 | 8   | [x]    | Add sets to game setup (set/leg modes like the PDC World Championship)                                        |
 | 9   | [x]    | TV-style match overview graphic under the players, reflecting the game setup (e.g. first to 3 sets, 3 legs per set) |
+| 10  | [x]    | Optional deciding-set tie-break (two clear legs, sudden death at 5-5) like the PDC World Championship        |
 
 ## Details
 
@@ -79,3 +80,12 @@ Acceptance:
 - Marks who throws first in the current leg; highlights the active player.
 - Data: `setLog` in game state (legs per player of each completed set); no new stored data.
 - Must stay compact on phone portrait and with up to 8 players.
+
+### 10. Deciding-set tie-break
+
+- Setup (x01, sets > 1): option "Deciding set: win by 2 legs". Off by default; remembered like other options.
+- Deciding set = 2-player match where both players are one set from winning. Not applied with 3+ players.
+- In the deciding set a player needs the legs target **and** a 2-leg lead. Cap: at (2L-1)-(2L-1) the next leg wins (first to 3 legs: 5-5, max 6-5).
+- Normal sets unchanged (3-2 wins a first-to-3 set).
+- Overview and History show the tie-break in the format text; the set winner is the higher leg count in each set column.
+- Re-verify legs/sets logic (see #8) after touching game-logic.ts.

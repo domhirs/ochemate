@@ -44,6 +44,16 @@ import { MatchConfig, Mode, OutMode, setsToWin } from './game-logic';
             <button type="button" [class.on]="legs() === l" (click)="legs.set(l)">{{ l }}</button>
           }
         </div>
+        @if (sets() > 1) {
+          <h3>Deciding set</h3>
+          <div class="seg">
+            <button type="button" [class.on]="!tieBreak()" (click)="tieBreak.set(false)">First to {{ legs() }}</button>
+            <button type="button" [class.on]="tieBreak()" (click)="tieBreak.set(true)">Win by 2 legs</button>
+          </div>
+          @if (tieBreak()) {
+            <p class="hint">Sudden-death leg at {{ 2 * legs() - 1 }}–{{ 2 * legs() - 1 }}. Two players only.</p>
+          }
+        }
       } @else if (mode() === 'cricket') {
         <p class="hint">Close 20 to 15 and Bull. Score on numbers your opponents have not closed.</p>
       } @else {
@@ -106,6 +116,7 @@ export class Setup {
   protected readonly doubleIn = signal(this.init.x01.doubleIn);
   protected readonly legs = signal(this.init.x01.legs);
   protected readonly sets = signal(setsToWin(this.init.x01));
+  protected readonly tieBreak = signal(this.init.x01.tieBreak ?? false);
   protected readonly players = signal<string[]>([...this.init.players]);
 
   protected rename(i: number, value: string): void {
@@ -133,7 +144,7 @@ export class Setup {
     const config: MatchConfig = {
       mode: this.mode(),
       players: names,
-      x01: { start: this.start(), doubleIn: this.doubleIn(), out: this.out(), legs: this.legs(), sets: this.sets() },
+      x01: { start: this.start(), doubleIn: this.doubleIn(), out: this.out(), legs: this.legs(), sets: this.sets(), tieBreak: this.tieBreak() },
     };
     this.game.start(config);
   }

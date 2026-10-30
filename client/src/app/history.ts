@@ -23,7 +23,7 @@ interface PlayerStat {
 
 function formatTarget(o: X01Options): string {
   const sets = setsToWin(o);
-  if (sets > 1) return `, first to ${sets} sets of ${o.legs} ${o.legs === 1 ? 'leg' : 'legs'}`;
+  if (sets > 1) return `, first to ${sets} sets of ${o.legs} ${o.legs === 1 ? 'leg' : 'legs'}${o.tieBreak ? ', decider by 2 legs' : ''}`;
   return o.legs > 1 ? `, first to ${o.legs}` : '';
 }
 
