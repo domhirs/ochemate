@@ -32,6 +32,11 @@ const MARKS = ['', '/', '✕', '⊗'];
                       <span>180 ×{{ p.oneEighties }}</span>
                     }
                   </div>
+                  <div class="throws" [class.bust]="throws()[i].bust">
+                    @for (l of throws()[i].labels; track $index) {
+                      <span class="chip" [class.empty]="l === null">{{ l ?? '–' }}</span>
+                    }
+                  </div>
                   @if (i === s.current && s.winner === null && checkout(); as route) {
                     <div class="route">{{ route }}</div>
                   }
@@ -47,6 +52,16 @@ const MARKS = ['', '/', '✕', '⊗'];
                       <th [class.active]="i === s.current && s.winner === null">
                         {{ p.name }}<span class="pts">{{ p.score }}</span>
                       </th>
+                    }
+                  </tr>
+                  <tr class="throws">
+                    <th></th>
+                    @for (p of s.players; track $index; let i = $index) {
+                      <td [class.active]="i === s.current && s.winner === null" [class.bust]="throws()[i].bust">
+                        @for (l of throws()[i].labels; track $index) {
+                          <span class="chip" [class.empty]="l === null">{{ l ?? '–' }}</span>
+                        }
+                      </td>
                     }
                   </tr>
                 </thead>
@@ -71,6 +86,11 @@ const MARKS = ['', '/', '✕', '⊗'];
                   <div class="big">{{ target(p.score) }}</div>
                   <div class="bar"><div [style.width.%]="(p.score / atcLength) * 100"></div></div>
                   <div class="meta"><span>Darts {{ p.darts }}</span></div>
+                  <div class="throws">
+                    @for (l of throws()[i].labels; track $index) {
+                      <span class="chip" [class.empty]="l === null">{{ l ?? '–' }}</span>
+                    }
+                  </div>
                 </div>
               }
             }
@@ -84,14 +104,6 @@ const MARKS = ['', '/', '✕', '⊗'];
         </div>
 
         <div class="input">
-          <div class="turn">
-            @for (d of s.turn; track $index) {
-              <span class="chip">{{ label(d) }}</span>
-            }
-            @for (_ of emptySlots(); track $index) {
-              <span class="chip empty">–</span>
-            }
-          </div>
           <div class="board"><app-dartboard (thrown)="game.throwDart($event)" /></div>
         </div>
       </div>
@@ -177,9 +189,12 @@ const MARKS = ['', '/', '✕', '⊗'];
     .board { flex: 1; min-height: 0; container-type: size; display: grid; overflow: auto; }
     /* Floor keeps small segments tappable; capped by width so it never scrolls sideways. margin:auto centres without clipping on overflow. */
     app-dartboard { --size: max(min(100cqw, 100cqh), min(var(--board-min), 100cqw)); width: var(--size); height: var(--size); margin: auto; }
-    .turn { display: flex; gap: .5rem; align-items: center; justify-content: flex-end; flex-wrap: wrap; min-height: 2.6rem; }
-    .chip { background: var(--surface); padding: .35rem .8rem; border-radius: 999px; font-weight: 700; min-width: 3rem; text-align: center; }
+    div.throws { display: flex; gap: .3rem; flex-wrap: wrap; margin-top: .25rem; }
+    .chip { background: #ffffff14; padding: .1rem .55rem; border-radius: 999px; font-weight: 700; font-size: .85rem; min-width: 2.4rem; text-align: center; }
     .chip.empty { opacity: .35; }
+    .bust .chip:not(.empty) { color: #f5624d; }
+    .cricket .throws td { padding: .2rem; border-bottom: 1px solid #0003; }
+    .cricket .chip { display: inline-block; margin: .1rem; font-size: .75rem; min-width: 0; padding: .05rem .4rem; }
     .actions { display: flex; gap: .5rem; flex: none; }
     .actions button { flex: 1; padding: .9rem; font-size: 1.1rem; min-height: 44px; }
     .actions .icon { flex: none; width: 44px; padding: 0; }
@@ -215,9 +230,6 @@ const MARKS = ['', '/', '✕', '⊗'];
       .layout { gap: .5rem; padding: .5rem; }
       .card { padding: .25rem .6rem; }
       .actions button { padding: .6rem; }
-      .turn { min-height: 2rem; gap: .35rem; }
-      .chip { padding: .15rem .6rem; }
-      .last { flex-basis: auto; }
       .cricket th, .cricket td { padding: .2rem; }
       .dialog { padding: 1rem; }
       .dialog h2 { margin-bottom: .5rem; }
@@ -241,9 +253,18 @@ export class Game {
     return route ? route.map(dartLabel).join('  ') : null;
   });
 
-  protected readonly emptySlots = computed(() => {
-    const s = this.state();
-    return s && s.winner === null ? Array(Math.max(0, 3 - s.turn.length)).fill(0) : [];
+  /** Per player: darts of their latest turn. Stays until that player throws again. */
+  protected readonly throws = computed(() => {
+    const s = this.state()!;
+    const history = this.game.history();
+    return s.players.map((_, p) => {
+      const mine = history.filter((e) => e.player === p);
+      const last = mine.length ? mine[mine.length - 1].turn : -1;
+      const entries = mine.filter((e) => e.turn === last);
+      const labels: (string | null)[] = entries.map((e) => dartLabel(e.dart));
+      while (labels.length < 3) labels.push(null);
+      return { labels, bust: entries.some((e) => e.bust) };
+    });
   });
 
   protected readonly avg = threeDartAvg;

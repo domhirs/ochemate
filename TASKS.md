@@ -9,7 +9,7 @@ Status: `[ ]` open, `[~]` in progress, `[x]` done.
 | 3   | [x]    | Move Undo and Miss buttons to the bottom of the player points area                                           |
 | 4   | [x]    | Dartboard keeps a minimum size so small segments stay touchable                                              |
 | 5   | [x]    | Game history (all thrown darts/actions) behind a small icon button next to Undo/Miss; drop the current-player / last-result text above the board |
-| 6   | [ ]    | Move the three-throw value display from the top right into the player card; keep it until that player's next move |
+| 6   | [x]    | Move the three-throw value display from the top right into the player card; keep it until that player's next move |
 
 ## Details
 
