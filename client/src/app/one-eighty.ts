@@ -25,6 +25,7 @@ const PIECES: Piece[] = Array.from({ length: 44 }, (_, i) => ({
 @Component({
   selector: 'app-one-eighty',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: { '[style.--dur]': 'seconds() + "s"' },
   template: `
     <div class="shade"></div>
     <div class="rays"></div>
@@ -46,7 +47,7 @@ const PIECES: Piece[] = Array.from({ length: 44 }, (_, i) => ({
     </div>
   `,
   styles: `
-    :host { position: fixed; inset: 0; z-index: 20; pointer-events: none; display: grid; place-items: center; overflow: hidden; animation: life 3s both; }
+    :host { position: fixed; inset: 0; z-index: 20; pointer-events: none; display: grid; place-items: center; overflow: hidden; animation: life var(--dur, 3s) both; }
     .shade { position: absolute; inset: 0; background: radial-gradient(circle at center, #000a 0%, #0000 75%); }
     .rays {
       position: absolute; width: 160vmax; height: 160vmax; left: 50%; top: 50%; margin: -80vmax 0 0 -80vmax; opacity: .55;
@@ -54,7 +55,7 @@ const PIECES: Piece[] = Array.from({ length: 44 }, (_, i) => ({
       -webkit-mask-image: radial-gradient(circle, #000 0%, #0000 60%); mask-image: radial-gradient(circle, #000 0%, #0000 60%);
       animation: spin 6s linear infinite;
     }
-    .stage { position: relative; text-align: center; animation: pop 3s cubic-bezier(.2, 1.4, .4, 1) both; }
+    .stage { position: relative; text-align: center; animation: pop var(--dur, 3s) cubic-bezier(.2, 1.4, .4, 1) both; }
     .title { display: flex; flex-direction: column; font-weight: 900; font-size: clamp(2rem, 11vmin, 6.5rem); line-height: 1; letter-spacing: .02em; }
     .title span {
       background: linear-gradient(180deg, #fff6c2 0%, #ffd23f 45%, #ff9f1c 100%); -webkit-background-clip: text; background-clip: text; color: transparent;
@@ -83,5 +84,6 @@ const PIECES: Piece[] = Array.from({ length: 44 }, (_, i) => ({
 })
 export class OneEighty {
   readonly name = input.required<string>();
+  readonly seconds = input(3);
   protected readonly pieces = PIECES;
 }

@@ -15,6 +15,7 @@ Status: `[ ]` open, `[~]` in progress, `[x]` done.
 | 9   | [x]    | TV-style match overview graphic under the players, reflecting the game setup (e.g. first to 3 sets, 3 legs per set) |
 | 10  | [x]    | Optional deciding-set tie-break (two clear legs, sudden death at 5-5) like the PDC World Championship        |
 | 11  | [x]    | "ONE HUNDRED AND EIGHTY!" celebration animation when a player hits a 180                                    |
+| 12  | [x]    | Sound on/off toggle and Ross Bray voice pack: play the 180 call with the 180 animation                       |
 
 ## Details
 
@@ -98,3 +99,12 @@ Acceptance:
 - Must not block input: next player can already throw while it plays (pointer-events: none). About 3 s.
 - Respects `prefers-reduced-motion` (plain fade, no rotation/confetti).
 - Pure CSS animation, no assets and no new dependencies. Sound is not included.
+
+### 12. Sound and voice packs
+
+- Voice packs in `client/public/sounds/<voice>/` with a `voice.json` that maps events to clip files (`{ "events": { "180": ["180.wav"] } }`). Adding a voice = adding a folder.
+- First pack: `ross-bray`. Only the `180` event is wired; other clips (scores, 1st/2nd/3rd) are for later tasks.
+- Sound toggle (🔊/🔇) in the header, remembered in localStorage, off by default.
+- 180 animation plays the clip and lasts at least as long as the clip. Undo or leaving the game stops it.
+- Web Audio so it works after the first tap on tablets; clips are preloaded; voice files are cached by the service worker.
+- Known issue: `gameon.wav` is Microsoft ADPCM and does not play in browsers; re-export as PCM WAV or mp3 before using it.

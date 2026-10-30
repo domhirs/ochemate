@@ -115,7 +115,7 @@ const MARKS = ['', '/', '✕', '⊗'];
       </div>
 
       @for (c of game.celebrations(); track c.id) {
-        <app-one-eighty [name]="c.name" />
+        <app-one-eighty [name]="c.name" [seconds]="c.seconds" />
       }
 
       @if (showHistory()) {

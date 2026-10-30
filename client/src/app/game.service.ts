@@ -1,13 +1,16 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { Api } from './api';
+import { Sound } from './sound';
 import { Dart, MatchConfig, buildHistory, defaultConfig, replay } from './game-logic';
 
 export interface Celebration {
   id: number;
   name: string;
+  /** Animation length; stretched to the voice clip when sound is on. */
+  seconds: number;
 }
 
-const CELEBRATION_MS = 3000;
+const CELEBRATION_SECONDS = 3;
 
 export type View = 'setup' | 'game' | 'history';
 
@@ -40,6 +43,7 @@ function store(key: string, value: unknown): void {
 @Injectable({ providedIn: 'root' })
 export class GameService {
   private readonly api = inject(Api);
+  private readonly sound = inject(Sound);
 
   readonly view = signal<View>('setup');
   readonly lastConfig = signal<MatchConfig>(load<MatchConfig>(CONFIG_KEY) ?? defaultConfig());
@@ -113,6 +117,7 @@ export class GameService {
   undo(): void {
     if (!this.darts().length) return;
     this.celebrations.set([]);
+    this.sound.stop();
     this.darts.update((list) => list.slice(0, -1));
     if (this.saved) {
       // Undoing a finished match: drop the stored result so the corrected one saves under a fresh id.
@@ -126,13 +131,16 @@ export class GameService {
 
   leave(): void {
     this.celebrations.set([]);
+    this.sound.stop();
     this.view.set('setup');
   }
 
   private celebrate(name: string): void {
     const id = ++this.celebrationId;
-    this.celebrations.update((l) => [...l, { id, name }]);
-    setTimeout(() => this.celebrations.update((l) => l.filter((c) => c.id !== id)), CELEBRATION_MS);
+    const clip = this.sound.play('180');
+    const seconds = Math.max(CELEBRATION_SECONDS, clip + 0.4);
+    this.celebrations.update((l) => [...l, { id, name, seconds }]);
+    setTimeout(() => this.celebrations.update((l) => l.filter((c) => c.id !== id)), seconds * 1000);
   }
 
   private async finish(): Promise<void> {
