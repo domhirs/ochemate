@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { Profile } from './api';
 import { GameService } from './game.service';
-import { Profiles } from './profiles';
+import { Profiles, describeProfileError } from './profiles';
 import { MatchConfig, Mode, OutMode, setsToWin } from './game-logic';
 
 interface Row {
@@ -87,6 +87,8 @@ interface Row {
       }
       @if (saveError()) {
         <p class="warn">{{ saveError() }}</p>
+      } @else if (profiles.problem(); as problem) {
+        <p class="warn">{{ describe(problem) }}</p>
       }
       <button type="button" class="ghost" (click)="add()" [disabled]="players().length >= 8">+ Add guest</button>
       @if (available().length) {
@@ -125,7 +127,8 @@ interface Row {
 })
 export class Setup {
   protected readonly game = inject(GameService);
-  private readonly profiles = inject(Profiles);
+  protected readonly profiles = inject(Profiles);
+  protected readonly describe = describeProfileError;
 
   protected readonly modes: { id: Mode; label: string }[] = [
     { id: 'x01', label: '301 / 501' },
@@ -153,6 +156,10 @@ export class Setup {
     }),
   );
   protected readonly saveError = signal('');
+
+  constructor() {
+    void this.profiles.refresh();
+  }
 
   /** Saved players not already in this game. */
   protected readonly available = computed(() => {
@@ -185,7 +192,7 @@ export class Setup {
       const { id, name } = result.profile;
       this.players.update((l) => l.map((p, idx) => (idx === i ? { name, id } : p)));
     } else {
-      this.saveError.set(result.error === 'taken' ? 'That name is already saved.' : 'Could not save the player. Is the server reachable?');
+      this.saveError.set(describeProfileError(result.error, result.status));
     }
   }
 

@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { Api, MatchRecord, Profile } from './api';
 import { PlayerStats, avg3, emptyStats, statsByProfile } from './player-stats';
-import { ProfileResult, Profiles } from './profiles';
+import { ProfileResult, Profiles, describeProfileError } from './profiles';
 
 type SortKey = 'matches' | 'wins' | 'winRate' | 'v180' | 'avg' | 'name';
 
@@ -46,8 +46,8 @@ const SORTS: { id: SortKey; label: string }[] = [
       @if (error()) {
         <p class="warn">{{ error() }}</p>
       }
-      @if (profiles.offline()) {
-        <p class="warn">Server unreachable. Showing the last known list.</p>
+      @if (problemText() && problemText() !== error()) {
+        <p class="warn">{{ problemText() }}{{ profiles.problem() === 'offline' ? ' Showing the last known list.' : '' }}</p>
       }
       @if (statsError()) {
         <p class="warn">Stats unavailable right now.</p>
@@ -198,6 +198,7 @@ export class Players {
   });
 
   constructor() {
+    void this.profiles.refresh();
     this.api
       .matches()
       .then((m) => this.matches.set(m))
@@ -240,10 +241,17 @@ export class Players {
 
   protected async remove(p: Profile): Promise<void> {
     if (!confirm(`Delete player "${p.name}"? Played matches are kept, but the stats are no longer shown.`)) return;
-    if (!(await this.profiles.remove(p.id))) this.error.set('Could not delete the player. Is the server reachable?');
+    const result = await this.profiles.remove(p.id);
+    if (result !== true) this.error.set(describeProfileError(result.error, result.status));
   }
 
+  /** Why the list could not be loaded, empty when the server answered. */
+  protected readonly problemText = computed(() => {
+    const problem = this.profiles.problem();
+    return problem ? describeProfileError(problem) : '';
+  });
+
   private message(r: Exclude<ProfileResult, { profile: Profile }>): string {
-    return r.error === 'taken' ? 'That name is already in use.' : r.error === 'invalid' ? 'Names need 1 to 30 characters.' : 'Server unreachable. Try again later.';
+    return describeProfileError(r.error, r.status);
   }
 }

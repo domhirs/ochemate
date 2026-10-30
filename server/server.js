@@ -124,6 +124,8 @@ app.delete('/api/players/:id', (req, res) => {
   res.status(204).end();
 });
 
+app.use('/api', (_req, res) => res.status(404).json({ error: 'not found' }));
+
 app.use(express.static(STATIC_DIR, { index: 'index.html', setHeaders: (res, path) => {
   // Service worker + manifest must never be cached stale, or updates never reach the tablet.
   if (/(ngsw\.json|ngsw-worker\.js|safety-worker\.js|manifest\.webmanifest|index\.html)$/.test(path)) {
