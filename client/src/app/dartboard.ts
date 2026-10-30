@@ -3,8 +3,8 @@ import { Dart } from './game-logic';
 
 const ORDER = [20, 1, 18, 4, 13, 6, 10, 15, 2, 17, 3, 19, 7, 16, 8, 11, 14, 9, 12, 5];
 
-// Radii in mm of a regulation board, rendered 1:1 in the viewBox.
-const R = { bull: 6.35, outerBull: 15.9, tripleIn: 99, tripleOut: 107, doubleIn: 162, doubleOut: 170 };
+// Based on a regulation board (outer edge 170) but with thicker double/triple rings and a bigger bull, so they are easy to hit by touch.
+const R = { bull: 8, outerBull: 19, tripleIn: 86, tripleOut: 110, doubleIn: 146, doubleOut: 170 };
 
 interface Segment {
   path: string;
@@ -55,8 +55,8 @@ function buildSegments(): Segment[] {
       @for (s of segments; track $index) {
         <path [attr.d]="s.path" [attr.fill]="s.fill" [attr.aria-label]="s.label" (click)="thrown.emit(s.dart)" />
       }
-      <circle r="15.9" fill="#2e8b4f" (click)="thrown.emit({ n: 25, m: 1 })" aria-label="Single bull" />
-      <circle r="6.35" fill="#c8312b" (click)="thrown.emit({ n: 25, m: 2 })" aria-label="Bull" />
+      <circle [attr.r]="r.outerBull" fill="#2e8b4f" (click)="thrown.emit({ n: 25, m: 1 })" aria-label="Single bull" />
+      <circle [attr.r]="r.bull" fill="#c8312b" (click)="thrown.emit({ n: 25, m: 2 })" aria-label="Bull" />
       @for (l of labels; track l.n) {
         <text [attr.x]="l.x" [attr.y]="l.y" text-anchor="middle" dominant-baseline="central">{{ l.n }}</text>
       }
@@ -72,6 +72,7 @@ function buildSegments(): Segment[] {
 })
 export class Dartboard {
   readonly thrown = output<Dart>();
+  protected readonly r = R;
   protected readonly segments = buildSegments();
   protected readonly labels: NumberLabel[] = ORDER.map((n, i) => {
     const [x, y] = pt(187, i * 18).split(' ').map(Number);

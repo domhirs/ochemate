@@ -17,6 +17,7 @@ Status: `[ ]` open, `[~]` in progress, `[x]` done.
 | 11  | [x]    | "ONE HUNDRED AND EIGHTY!" celebration animation when a player hits a 180                                    |
 | 12  | [x]    | Sound on/off toggle and Ross Bray voice pack: play the 180 call with the 180 animation                       |
 | 13  | [x]    | Use the project name dartzn in the app instead of plain Darts                                                  |
+| 14  | [x]    | Make the double and triple rings bigger so they are easier to tap                                              |
 
 ## Details
 
@@ -115,3 +116,8 @@ Acceptance:
 - Browser tab title, PWA name and short name, header logo and doc titles say `dartzn`.
 - Not renamed on purpose: Docker service/image/volume (`dartboard`, `dartboard-data`) and `/data/dartboard.db`. Renaming would orphan the existing match database.
 - Not changed: app icons (PNG files).
+
+### 14. Bigger double and triple rings
+
+- Double and triple rings are 24 units wide instead of 8 (regulation) and the bull is slightly bigger. Still looks like a dartboard; numbers keep their ring.
+- Hit areas are the drawn shapes, so what you see is what you tap.
