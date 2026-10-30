@@ -1,4 +1,4 @@
-# Darts Scoreboard
+# dartzn (Darts Scoreboard)
 
 Self-hosted dart scorer, used on a tablet at the board. Tap the SVG dartboard to score. Remote: `https://github.com/domhirs/dartzn.git`, branch `main`. Open work is tracked in [TASKS.md](TASKS.md).
 

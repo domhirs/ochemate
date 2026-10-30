@@ -1,6 +1,6 @@
 {
-  "name": "Darts Scoreboard",
-  "short_name": "Darts",
+  "name": "dartzn",
+  "short_name": "dartzn",
   "display": "standalone",
   "orientation": "landscape",
   "background_color": "#14171c",

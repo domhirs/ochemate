@@ -11,7 +11,7 @@ import { Sound } from './sound';
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <header>
-      <span class="logo">🎯<span class="word"> Darts</span></span>
+      <span class="logo">🎯<span class="word"> dartzn</span></span>
       <nav>
         @if (game.hasGame()) {
           <button type="button" [class.on]="game.view() === 'game'" (click)="game.view.set('game')">Game</button>

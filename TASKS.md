@@ -16,6 +16,7 @@ Status: `[ ]` open, `[~]` in progress, `[x]` done.
 | 10  | [x]    | Optional deciding-set tie-break (two clear legs, sudden death at 5-5) like the PDC World Championship        |
 | 11  | [x]    | "ONE HUNDRED AND EIGHTY!" celebration animation when a player hits a 180                                    |
 | 12  | [x]    | Sound on/off toggle and Ross Bray voice pack: play the 180 call with the 180 animation                       |
+| 13  | [x]    | Use the project name dartzn in the app instead of plain Darts                                                  |
 
 ## Details
 
@@ -108,3 +109,9 @@ Acceptance:
 - 180 animation plays the clip and lasts at least as long as the clip. Undo or leaving the game stops it.
 - Web Audio so it works after the first tap on tablets; clips are preloaded; voice files are cached by the service worker.
 - Known issue: `gameon.wav` is Microsoft ADPCM and does not play in browsers; re-export as PCM WAV or mp3 before using it.
+
+### 13. dartzn branding
+
+- Browser tab title, PWA name and short name, header logo and doc titles say `dartzn`.
+- Not renamed on purpose: Docker service/image/volume (`dartboard`, `dartboard-data`) and `/data/dartboard.db`. Renaming would orphan the existing match database.
+- Not changed: app icons (PNG files).
