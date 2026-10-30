@@ -127,23 +127,23 @@ const MARKS = ['', '/', '✕', '⊗'];
   `,
   styles: `
     :host { display: block; height: 100%; }
-    .layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: 1rem; padding: 1rem; height: 100%; }
-    .score { display: flex; flex-direction: column; gap: .75rem; overflow-y: auto; min-height: 0; }
-    .card { background: var(--surface); border: 3px solid transparent; border-radius: 14px; padding: .75rem 1rem; }
+    .layout { display: grid; grid-template-columns: minmax(0, .75fr) minmax(0, 1.5fr); gap: .75rem; padding: 1rem; height: 100%; }
+    .score { display: flex; flex-direction: column; gap: .5rem; overflow-y: auto; min-height: 0; }
+    .card { background: var(--surface); border: 3px solid transparent; border-radius: 12px; padding: .4rem .75rem; }
     .card.active { border-color: var(--accent); }
     .top { display: flex; justify-content: space-between; align-items: baseline; }
-    .name { font-weight: 700; font-size: 1.1rem; }
+    .name { font-weight: 700; font-size: 1rem; }
     .legs { color: var(--accent); font-weight: 700; }
-    .big { font-size: clamp(2.2rem, min(9vw, 12dvh), 5.5rem); font-weight: 800; line-height: 1.05; font-variant-numeric: tabular-nums; }
-    .meta { display: flex; gap: 1rem; color: var(--muted); font-size: .9rem; }
-    .route { margin-top: .4rem; color: var(--accent); font-weight: 700; letter-spacing: .03em; }
+    .big { font-size: clamp(1.8rem, min(6vw, 8dvh), 3.2rem); font-weight: 800; line-height: 1.05; font-variant-numeric: tabular-nums; }
+    .meta { display: flex; gap: 1rem; color: var(--muted); font-size: .8rem; }
+    .route { margin-top: .2rem; font-size: .9rem; color: var(--accent); font-weight: 700; letter-spacing: .03em; }
     .bar { height: 8px; background: #0003; border-radius: 4px; margin: .25rem 0 .5rem; overflow: hidden; }
     .bar div { height: 100%; background: var(--accent); }
-    .cricket { width: 100%; border-collapse: collapse; background: var(--surface); text-align: center; font-size: 1.6rem; }
-    .cricket th, .cricket td { padding: .55rem .4rem; border-bottom: 1px solid #0003; }
-    .cricket thead th { font-size: 1rem; }
-    .cricket .pts { display: block; font-size: 1.8rem; color: var(--accent); }
-    .cricket tbody th { color: var(--muted); font-size: 1.1rem; }
+    .cricket { width: 100%; border-collapse: collapse; background: var(--surface); text-align: center; font-size: 1.2rem; }
+    .cricket th, .cricket td { padding: .3rem .3rem; border-bottom: 1px solid #0003; }
+    .cricket thead th { font-size: .9rem; }
+    .cricket .pts { display: block; font-size: 1.3rem; color: var(--accent); }
+    .cricket tbody th { color: var(--muted); font-size: 1rem; }
     .cricket .active { background: #ffffff10; }
     .cricket .closed { color: var(--accent); }
     .input { display: flex; flex-direction: column; gap: .5rem; min-height: 0; min-width: 0; }
@@ -167,15 +167,15 @@ const MARKS = ['', '/', '✕', '⊗'];
     /* Overrides below must stay last: same specificity as the base rules above. */
     @media (max-aspect-ratio: 1/1) {
       .layout { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr); gap: .5rem; padding: .5rem; }
-      .score { flex-direction: row; flex-wrap: wrap; max-height: 40dvh; align-content: flex-start; gap: .5rem; }
-      .card { flex: 1 1 9rem; padding: .5rem .75rem; }
-      .cricket { font-size: clamp(1rem, 3.6dvh, 1.6rem); }
+      .score { flex-direction: row; flex-wrap: wrap; max-height: 28dvh; align-content: flex-start; gap: .5rem; }
+      .card { flex: 1 1 8rem; padding: .3rem .6rem; }
+      .cricket { font-size: clamp(.9rem, 2.8dvh, 1.2rem); }
       .cricket th, .cricket td { padding: .25rem; }
-      .cricket .pts { font-size: clamp(1.1rem, 3.6dvh, 1.8rem); }
+      .cricket .pts { font-size: clamp(1rem, 2.8dvh, 1.3rem); }
     }
     @media (max-height: 500px) {
       .layout { gap: .5rem; padding: .5rem; }
-      .card { padding: .4rem .75rem; }
+      .card { padding: .25rem .6rem; }
       .actions button { padding: .6rem; }
       .turn { min-height: 2rem; gap: .35rem; }
       .chip { padding: .15rem .6rem; }
