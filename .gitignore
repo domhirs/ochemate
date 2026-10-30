@@ -1,4 +1,33 @@
+# Dependencies
 node_modules/
+
+# Build output and caches
 client/dist/
 client/.angular/
+*.tsbuildinfo
+
+# Runtime data (SQLite DB and WAL files)
 server/data/
+*.db
+*.db-shm
+*.db-wal
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+npm-debug.log*
+
+# Tooling output
+.playwright-mcp/
+coverage/
+
+# Editors and OS
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store
+Thumbs.db
