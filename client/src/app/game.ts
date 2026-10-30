@@ -128,7 +128,7 @@ const MARKS = ['', '/', '✕', '⊗'];
     }
   `,
   styles: `
-    :host { display: block; height: 100%; }
+    :host { display: block; height: 100%; --board-min: 420px; }
     .layout { display: grid; grid-template-columns: minmax(0, .75fr) minmax(0, 1.5fr); gap: .75rem; padding: 1rem; height: 100%; }
     .side { display: flex; flex-direction: column; gap: .5rem; min-height: 0; min-width: 0; }
     .score { display: flex; flex-direction: column; gap: .5rem; overflow-y: auto; min-height: 0; flex: 1; }
@@ -150,8 +150,9 @@ const MARKS = ['', '/', '✕', '⊗'];
     .cricket .active { background: #ffffff10; }
     .cricket .closed { color: var(--accent); }
     .input { display: flex; flex-direction: column; gap: .5rem; min-height: 0; min-width: 0; }
-    .board { flex: 1; min-height: 0; container-type: size; display: grid; place-items: center; }
-    app-dartboard { width: min(100cqw, 100cqh); height: min(100cqw, 100cqh); }
+    .board { flex: 1; min-height: 0; container-type: size; display: grid; overflow: auto; }
+    /* Floor keeps small segments tappable; capped by width so it never scrolls sideways. margin:auto centres without clipping on overflow. */
+    app-dartboard { --size: max(min(100cqw, 100cqh), min(var(--board-min), 100cqw)); width: var(--size); height: var(--size); margin: auto; }
     .turn { display: flex; gap: .5rem; align-items: center; flex-wrap: wrap; min-height: 2.6rem; }
     .who { font-weight: 700; margin-right: auto; }
     .chip { background: var(--surface); padding: .35rem .8rem; border-radius: 999px; font-weight: 700; min-width: 3rem; text-align: center; }
