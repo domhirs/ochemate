@@ -181,8 +181,8 @@ const MARKS = ['', '/', '✕', '⊗'];
     .card { background: var(--surface); border: 3px solid transparent; border-radius: 12px; padding: .4rem .75rem; }
     .card.active { border-color: var(--accent); }
     .top { display: flex; justify-content: space-between; align-items: baseline; }
-    .name { font-weight: 700; font-size: 1rem; }
-    .big { font-size: clamp(1.8rem, min(6vw, 8dvh), 3.2rem); font-weight: 800; line-height: 1.05; font-variant-numeric: tabular-nums; }
+    .name { font-weight: 700; font-size: 1rem; color: var(--text-strong); }
+    .big { font-size: clamp(1.8rem, min(6vw, 8dvh), 3.2rem); font-weight: 800; color: var(--text-strong); line-height: 1.05; font-variant-numeric: tabular-nums; }
     .meta { display: flex; gap: 1rem; color: var(--muted); font-size: .8rem; }
     .routes { display: flex; flex-wrap: wrap; gap: .1rem .9rem; margin-top: .2rem; font-size: .9rem; letter-spacing: .03em; }
     .route { color: var(--muted); font-weight: 600; white-space: nowrap; }

@@ -3,6 +3,7 @@
   --bg: #14171c;
   --surface: #1f242c;
   --text: #f1f3f5;
+  --text-strong: #f1f3f5;
   --muted: #8d97a5;
   --accent: #3ddc84;
   --on-accent: #07210f;
@@ -21,6 +22,7 @@
   --bg: #eef1f5;
   --surface: #ffffff;
   --text: #2c333d;
+  --text-strong: #475160;
   --muted: #5d6877;
   --accent: #0b8a43;
   --on-accent: #ffffff;

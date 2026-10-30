@@ -150,7 +150,7 @@ Acceptance:
 
 ### 18. Theming
 
-- The existing look is the `dark` theme. `light` is new. Colors are CSS tokens (`--bg`, `--surface`, `--text`, `--muted`, `--accent`, `--on-accent`, `--control`, `--fill`, `--fill-strong`, `--line`, `--ghost-border`, `--warn`, `--danger`, `--scrim`) in `styles.css`; components use only tokens, no hex.
+- The existing look is the `dark` theme. `light` is new. Colors are CSS tokens (`--bg`, `--surface`, `--text`, `--text-strong` (big scores and player names), `--muted`, `--accent`, `--on-accent`, `--control`, `--fill`, `--fill-strong`, `--line`, `--ghost-border`, `--warn`, `--danger`, `--scrim`) in `styles.css`; components use only tokens, no hex.
 - `Theme` service (`theme.ts`) sets `data-theme` on `<html>` and the `theme-color` meta, saved in localStorage `dartboard.theme`. An inline script in `index.html` applies it before first paint.
 - Header button shows the current theme icon and switches to the next one. Add a theme = one entry in `THEMES` + one token block in `styles.css`.
 - The dartboard keeps its real-board colors in every theme. The 180 celebration keeps its own colors.
