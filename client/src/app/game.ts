@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { Dartboard } from './dartboard';
+import { MatchOverview } from './match-overview';
 import { GameService } from './game.service';
 import { ATC_SEQUENCE, CRICKET_NUMBERS, Dart, checkoutRoutes, dartLabel, setsToWin, threeDartAvg } from './game-logic';
 
@@ -7,7 +8,7 @@ const MARKS = ['', '/', '✕', '⊗'];
 
 @Component({
   selector: 'app-game',
-  imports: [Dartboard],
+  imports: [Dartboard, MatchOverview],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     @if (state(); as s) {
@@ -20,11 +21,6 @@ const MARKS = ['', '/', '✕', '⊗'];
                 <div class="card" [class.active]="i === s.current && s.winner === null">
                   <div class="top">
                     <span class="name">{{ p.name }}</span>
-                    @if (sets() > 1) {
-                      <span class="legs">Sets {{ p.sets }} · Legs {{ p.legs }}</span>
-                    } @else if (s.config.x01.legs > 1) {
-                      <span class="legs">Legs {{ p.legs }}</span>
-                    }
                   </div>
                   <div class="big">{{ p.score }}</div>
                   <div class="meta">
@@ -102,6 +98,9 @@ const MARKS = ['', '/', '✕', '⊗'];
             }
           }
         </div>
+          @if (s.config.mode === 'x01' && (sets() > 1 || s.config.x01.legs > 1)) {
+            <app-match-overview [state]="s" />
+          }
           <div class="actions">
             <button type="button" (click)="game.undo()" [disabled]="!game.canUndo()">⟲ Undo</button>
             <button type="button" (click)="game.throwDart({ n: 0, m: 0 })">Miss</button>
@@ -173,12 +172,11 @@ const MARKS = ['', '/', '✕', '⊗'];
     :host { display: block; height: 100%; --board-min: 420px; }
     .layout { display: grid; grid-template-columns: minmax(0, .75fr) minmax(0, 1.5fr); gap: .75rem; padding: 1rem; height: 100%; }
     .side { display: flex; flex-direction: column; gap: .5rem; min-height: 0; min-width: 0; }
-    .score { display: flex; flex-direction: column; gap: .5rem; overflow-y: auto; min-height: 0; flex: 1; }
+    .score { display: flex; flex-direction: column; gap: .5rem; overflow-y: auto; min-height: 0; flex: 0 1 auto; }
     .card { background: var(--surface); border: 3px solid transparent; border-radius: 12px; padding: .4rem .75rem; }
     .card.active { border-color: var(--accent); }
     .top { display: flex; justify-content: space-between; align-items: baseline; }
     .name { font-weight: 700; font-size: 1rem; }
-    .legs { color: var(--accent); font-weight: 700; }
     .big { font-size: clamp(1.8rem, min(6vw, 8dvh), 3.2rem); font-weight: 800; line-height: 1.05; font-variant-numeric: tabular-nums; }
     .meta { display: flex; gap: 1rem; color: var(--muted); font-size: .8rem; }
     .routes { display: flex; flex-wrap: wrap; gap: .1rem .9rem; margin-top: .2rem; font-size: .9rem; letter-spacing: .03em; }
@@ -194,7 +192,7 @@ const MARKS = ['', '/', '✕', '⊗'];
     .cricket .active { background: #ffffff10; }
     .cricket .closed { color: var(--accent); }
     .input { display: flex; flex-direction: column; gap: .5rem; min-height: 0; min-width: 0; }
-    .board { flex: 1; min-height: 0; container-type: size; display: grid; overflow: auto; }
+    .board { flex: 1; min-height: 0; container-type: size; display: grid; overflow: hidden auto; scrollbar-width: none; }
     /* Floor keeps small segments tappable; capped by width so it never scrolls sideways. margin:auto centres without clipping on overflow. */
     app-dartboard { --size: max(min(100cqw, 100cqh), min(var(--board-min), 100cqw)); width: var(--size); height: var(--size); margin: auto; }
     div.throws { display: flex; gap: .3rem; flex-wrap: wrap; margin-top: .25rem; }
@@ -203,7 +201,7 @@ const MARKS = ['', '/', '✕', '⊗'];
     .bust .chip:not(.empty) { color: #f5624d; }
     .cricket .throws td { padding: .2rem; border-bottom: 1px solid #0003; }
     .cricket .chip { display: inline-block; margin: .1rem; font-size: .75rem; min-width: 0; padding: .05rem .4rem; }
-    .actions { display: flex; gap: .5rem; flex: none; }
+    .actions { display: flex; gap: .5rem; flex: none; margin-top: auto; }
     .actions button { flex: 1; padding: .9rem; font-size: 1.1rem; min-height: 44px; }
     .actions .icon { flex: none; width: 44px; padding: 0; }
     .history .head { display: flex; justify-content: space-between; align-items: center; }

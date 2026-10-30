@@ -58,6 +58,8 @@ export interface GameState {
   setStarter: number;
   leg: number;
   set: number;
+  /** Legs per player of each completed set, in order. */
+  setLog: number[][];
   winner: number | null;
   lastTurn: TurnSummary | null;
 }
@@ -97,6 +99,7 @@ export function newState(config: MatchConfig): GameState {
     setStarter: 0,
     leg: 1,
     set: 1,
+    setLog: [],
     winner: null,
     lastTurn: null,
   };
@@ -165,6 +168,7 @@ function applyX01(s: GameState, p: PlayerState, d: Dart): void {
   p.legs++;
   s.lastTurn = { player: s.current, darts: s.turn, total, bust: false };
   if (p.legs >= o.legs) {
+    s.setLog.push(s.players.map((q) => q.legs));
     p.sets++;
     if (p.sets >= setsToWin(o)) {
       s.winner = s.current;

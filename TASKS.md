@@ -12,6 +12,7 @@ Status: `[ ]` open, `[~]` in progress, `[x]` done.
 | 6   | [x]    | Move the three-throw value display from the top right into the player card; keep it until that player's next move |
 | 7   | [x]    | Show a list of possible checkout paths when a player is in range                                             |
 | 8   | [x]    | Add sets to game setup (set/leg modes like the PDC World Championship)                                        |
+| 9   | [x]    | TV-style match overview graphic under the players, reflecting the game setup (e.g. first to 3 sets, 3 legs per set) |
 
 ## Details
 
@@ -69,3 +70,12 @@ Acceptance:
 - Scoreboard shows sets and legs; History row shows the format; winner dialog shows sets.
 - Old saved matches without `sets` count as 1 set.
 - Not included: PDC final-set two-clear-legs rule / tiebreaks.
+
+### 9. TV-style match overview
+
+- Panel directly under the player cards (x01 with sets or legs > 1; hidden for single-leg x01, cricket, atc).
+- Header states the format: "First to 3 sets · 3 legs per set" plus start score and out mode.
+- Sets mode: one column per completed set with the legs each player won, a highlighted live column for the current set, and a Sets total. Legs-only mode: a single Legs column.
+- Marks who throws first in the current leg; highlights the active player.
+- Data: `setLog` in game state (legs per player of each completed set); no new stored data.
+- Must stay compact on phone portrait and with up to 8 players.
