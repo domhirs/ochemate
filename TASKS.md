@@ -18,6 +18,7 @@ Status: `[ ]` open, `[~]` in progress, `[x]` done.
 | 12  | [x]    | Sound on/off toggle and Ross Bray voice pack: play the 180 call with the 180 animation                       |
 | 13  | [x]    | Use the project name dartzn in the app instead of plain Darts                                                  |
 | 14  | [x]    | Make the double and triple rings bigger so they are easier to tap                                              |
+| 15  | [x]    | Make the bullseye (single and double bull) bigger                                                              |
 
 ## Details
 
@@ -121,3 +122,8 @@ Acceptance:
 
 - Double and triple rings are 24 units wide instead of 8 (regulation) and the bull is slightly bigger. Still looks like a dartboard; numbers keep their ring.
 - Hit areas are the drawn shapes, so what you see is what you tap.
+
+### 15. Bigger bullseye
+
+- Inner bull radius 8 -> 11, outer bull radius 19 -> 25 (viewBox units; regulation is 6.35 / 15.9).
+- Single areas inside the triple ring stay wide (25 to 86).

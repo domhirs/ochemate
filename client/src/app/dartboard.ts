@@ -4,7 +4,7 @@ import { Dart } from './game-logic';
 const ORDER = [20, 1, 18, 4, 13, 6, 10, 15, 2, 17, 3, 19, 7, 16, 8, 11, 14, 9, 12, 5];
 
 // Based on a regulation board (outer edge 170) but with thicker double/triple rings and a bigger bull, so they are easy to hit by touch.
-const R = { bull: 8, outerBull: 19, tripleIn: 86, tripleOut: 110, doubleIn: 146, doubleOut: 170 };
+const R = { bull: 11, outerBull: 25, tripleIn: 86, tripleOut: 110, doubleIn: 146, doubleOut: 170 };
 
 interface Segment {
   path: string;
