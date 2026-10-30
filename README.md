@@ -2,7 +2,7 @@
 
 Self-hosted dart scorer for a tablet. Tap the on-screen board to score.
 
-- Games: X01 (301/501/701, double-in, straight/double/master-out, legs), Cricket, Around the Clock
+- Games: X01 (301/501/701, double-in, straight/double/master-out, legs and sets), Cricket, Around the Clock
 - Checkout suggestions, 3-dart average, 180 counter, undo
 - Match history and per-player stats (stored in SQLite on the server)
 - Installable PWA, current game survives reloads

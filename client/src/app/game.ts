@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { Dartboard } from './dartboard';
 import { GameService } from './game.service';
-import { ATC_SEQUENCE, CRICKET_NUMBERS, Dart, checkoutRoutes, dartLabel, threeDartAvg } from './game-logic';
+import { ATC_SEQUENCE, CRICKET_NUMBERS, Dart, checkoutRoutes, dartLabel, setsToWin, threeDartAvg } from './game-logic';
 
 const MARKS = ['', '/', '✕', '⊗'];
 
@@ -20,7 +20,9 @@ const MARKS = ['', '/', '✕', '⊗'];
                 <div class="card" [class.active]="i === s.current && s.winner === null">
                   <div class="top">
                     <span class="name">{{ p.name }}</span>
-                    @if (s.config.x01.legs > 1) {
+                    @if (sets() > 1) {
+                      <span class="legs">Sets {{ p.sets }} · Legs {{ p.legs }}</span>
+                    } @else if (s.config.x01.legs > 1) {
                       <span class="legs">Legs {{ p.legs }}</span>
                     }
                   </div>
@@ -148,7 +150,7 @@ const MARKS = ['', '/', '✕', '⊗'];
             <div class="stats">
               @for (p of s.players; track $index) {
                 @if (s.config.mode === 'x01') {
-                  <span>{{ p.name }}: avg {{ avg(p).toFixed(1) }}, darts {{ p.darts }}, best out {{ p.highCheckout || '–' }}</span>
+                  <span>{{ p.name }}: @if (sets() > 1) { sets {{ p.sets }}, }avg {{ avg(p).toFixed(1) }}, darts {{ p.darts }}, best out {{ p.highCheckout || '–' }}</span>
                 } @else {
                   <span>{{ p.name }}: darts {{ p.darts }}</span>
                 }
@@ -245,6 +247,10 @@ const MARKS = ['', '/', '✕', '⊗'];
 export class Game {
   protected readonly game = inject(GameService);
   protected readonly state = this.game.state;
+  protected readonly sets = computed(() => {
+    const s = this.state();
+    return s && s.config.mode === 'x01' ? setsToWin(s.config.x01) : 1;
+  });
   protected readonly showHistory = signal(false);
   protected readonly reversed = computed(() => this.game.history().map((e, index) => ({ ...e, index })).reverse());
   protected readonly cricketNumbers = CRICKET_NUMBERS;

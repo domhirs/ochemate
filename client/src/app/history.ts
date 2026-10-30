@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnInit, computed, inject, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { Api, MatchRecord } from './api';
-import { GameState, Mode, replay, threeDartAvg } from './game-logic';
+import { GameState, Mode, X01Options, replay, setsToWin, threeDartAvg } from './game-logic';
 
 interface Row {
   id: string;
@@ -19,6 +19,12 @@ interface PlayerStat {
   x01Points: number;
   oneEighties: number;
   bestOut: number;
+}
+
+function formatTarget(o: X01Options): string {
+  const sets = setsToWin(o);
+  if (sets > 1) return `, first to ${sets} sets of ${o.legs} ${o.legs === 1 ? 'leg' : 'legs'}`;
+  return o.legs > 1 ? `, first to ${o.legs}` : '';
 }
 
 const MODE_TITLE: Record<Mode, string> = { x01: 'X01', cricket: 'Cricket', atc: 'Around the Clock' };
@@ -111,7 +117,7 @@ export class History implements OnInit {
   protected readonly rows = computed<Row[]>(() =>
     this.records().map((r) => {
       const c = r.config;
-      const detail = c.mode === 'x01' ? `${c.x01.start}${c.x01.legs > 1 ? `, first to ${c.x01.legs}` : ''}` : '';
+      const detail = c.mode === 'x01' ? `${c.x01.start}${formatTarget(c.x01)}` : '';
       return {
         id: r.id,
         finishedAt: r.finishedAt ?? '',

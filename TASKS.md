@@ -11,6 +11,7 @@ Status: `[ ]` open, `[~]` in progress, `[x]` done.
 | 5   | [x]    | Game history (all thrown darts/actions) behind a small icon button next to Undo/Miss; drop the current-player / last-result text above the board |
 | 6   | [x]    | Move the three-throw value display from the top right into the player card; keep it until that player's next move |
 | 7   | [x]    | Show a list of possible checkout paths when a player is in range                                             |
+| 8   | [x]    | Add sets to game setup (set/leg modes like the PDC World Championship)                                        |
 
 ## Details
 
@@ -59,3 +60,12 @@ Acceptance:
 - Respect darts left in the turn and the out mode (straight / double / master) and double-in.
 - Routes stay human-looking (cost-weighted, see `checkoutRoute()`); no permutation duplicates (T20 T18 vs T18 T20).
 - Re-verify checkouts after touching `game-logic.ts` (e.g. 170, 167, 100, 40, 3, 2, bogeys like 169).
+
+### 8. Sets and legs
+
+- Setup (x01 only): "Sets to win" next to "Legs per set". Sets = 1 keeps today's legs-only behaviour.
+- A set is won by the first player to reach the legs-per-set target; the match by the first to the sets target.
+- Leg starter alternates each leg inside a set; the first leg of each new set is started by the player who did not start the previous set (PDC style).
+- Scoreboard shows sets and legs; History row shows the format; winner dialog shows sets.
+- Old saved matches without `sets` count as 1 set.
+- Not included: PDC final-set two-clear-legs rule / tiebreaks.

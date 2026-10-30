@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { GameService } from './game.service';
-import { MatchConfig, Mode, OutMode } from './game-logic';
+import { MatchConfig, Mode, OutMode, setsToWin } from './game-logic';
 
 @Component({
   selector: 'app-setup',
@@ -32,7 +32,13 @@ import { MatchConfig, Mode, OutMode } from './game-logic';
           <button type="button" [class.on]="!doubleIn()" (click)="doubleIn.set(false)">Straight in</button>
           <button type="button" [class.on]="doubleIn()" (click)="doubleIn.set(true)">Double in</button>
         </div>
-        <h3>Legs to win</h3>
+        <h3>Sets to win</h3>
+        <div class="seg">
+          @for (n of [1, 2, 3, 4, 5, 6, 7]; track n) {
+            <button type="button" [class.on]="sets() === n" (click)="sets.set(n)">{{ n }}</button>
+          }
+        </div>
+        <h3>{{ sets() > 1 ? 'Legs per set' : 'Legs to win' }}</h3>
         <div class="seg">
           @for (l of [1, 2, 3, 4, 5]; track l) {
             <button type="button" [class.on]="legs() === l" (click)="legs.set(l)">{{ l }}</button>
@@ -99,6 +105,7 @@ export class Setup {
   protected readonly out = signal<OutMode>(this.init.x01.out);
   protected readonly doubleIn = signal(this.init.x01.doubleIn);
   protected readonly legs = signal(this.init.x01.legs);
+  protected readonly sets = signal(setsToWin(this.init.x01));
   protected readonly players = signal<string[]>([...this.init.players]);
 
   protected rename(i: number, value: string): void {
@@ -126,7 +133,7 @@ export class Setup {
     const config: MatchConfig = {
       mode: this.mode(),
       players: names,
-      x01: { start: this.start(), doubleIn: this.doubleIn(), out: this.out(), legs: this.legs() },
+      x01: { start: this.start(), doubleIn: this.doubleIn(), out: this.out(), legs: this.legs(), sets: this.sets() },
     };
     this.game.start(config);
   }

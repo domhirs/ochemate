@@ -11,8 +11,13 @@ export interface X01Options {
   start: number;
   doubleIn: boolean;
   out: OutMode;
+  /** Legs needed to win a set (or the match when sets is 1). */
   legs: number;
+  /** Sets needed to win the match. Missing in matches saved before sets existed = 1. */
+  sets?: number;
 }
+
+export const setsToWin = (o: X01Options): number => o.sets ?? 1;
 
 export interface MatchConfig {
   mode: Mode;
@@ -22,7 +27,9 @@ export interface MatchConfig {
 
 export interface PlayerState {
   name: string;
+  /** Legs in the current set. */
   legs: number;
+  sets: number;
   /** x01: remaining. cricket: points. atc: index of the next target in ATC_SEQUENCE. */
   score: number;
   marks: Partial<Record<number, number>>;
@@ -48,7 +55,9 @@ export interface GameState {
   turn: Dart[];
   turnStart: number;
   legStarter: number;
+  setStarter: number;
   leg: number;
+  set: number;
   winner: number | null;
   lastTurn: TurnSummary | null;
 }
@@ -60,7 +69,7 @@ export function defaultConfig(): MatchConfig {
   return {
     mode: 'x01',
     players: ['Player 1', 'Player 2'],
-    x01: { start: 501, doubleIn: false, out: 'double', legs: 1 },
+    x01: { start: 501, doubleIn: false, out: 'double', legs: 1, sets: 1 },
   };
 }
 
@@ -71,6 +80,7 @@ export function newState(config: MatchConfig): GameState {
     players: config.players.map((name) => ({
       name,
       legs: 0,
+      sets: 0,
       score: start,
       marks: {},
       opened: false,
@@ -84,7 +94,9 @@ export function newState(config: MatchConfig): GameState {
     turn: [],
     turnStart: start,
     legStarter: 0,
+    setStarter: 0,
     leg: 1,
+    set: 1,
     winner: null,
     lastTurn: null,
   };
@@ -153,12 +165,21 @@ function applyX01(s: GameState, p: PlayerState, d: Dart): void {
   p.legs++;
   s.lastTurn = { player: s.current, darts: s.turn, total, bust: false };
   if (p.legs >= o.legs) {
-    s.winner = s.current;
-    s.turn = [];
-    return;
+    p.sets++;
+    if (p.sets >= setsToWin(o)) {
+      s.winner = s.current;
+      s.turn = [];
+      return;
+    }
+    // New set: legs reset and the other player opens, like on the PDC stage.
+    for (const q of s.players) q.legs = 0;
+    s.set++;
+    s.setStarter = (s.setStarter + 1) % s.players.length;
+    s.legStarter = s.setStarter;
+  } else {
+    s.legStarter = (s.legStarter + 1) % s.players.length;
   }
   s.leg++;
-  s.legStarter = (s.legStarter + 1) % s.players.length;
   s.current = s.legStarter;
   s.turn = [];
   for (const q of s.players) {
