@@ -198,6 +198,41 @@ function applyAtc(s: GameState, p: PlayerState, d: Dart): void {
   if (s.turn.length === 3) endTurn(s, 0, false);
 }
 
+export interface HistoryEntry {
+  /** 1-based, counts every turn of every player. */
+  turn: number;
+  player: number;
+  dart: Dart;
+  /** Player score right after the dart (x01 remaining, cricket points, atc target index). */
+  after: number;
+  bust: boolean;
+  /** This dart won the match. */
+  win: boolean;
+}
+
+/** Every dart of the match with its outcome. Same replay as `replay`, so undo needs no extra bookkeeping. */
+export function buildHistory(config: MatchConfig, darts: Dart[]): HistoryEntry[] {
+  const s = newState(config);
+  const out: HistoryEntry[] = [];
+  let turn = 0;
+  for (const dart of darts) {
+    if (s.winner !== null) break;
+    if (s.turn.length === 0) turn++;
+    const player = s.current;
+    const prev = s.lastTurn;
+    applyDart(s, dart);
+    out.push({
+      turn,
+      player,
+      dart,
+      after: s.players[player].score,
+      bust: s.lastTurn !== prev && s.lastTurn!.bust,
+      win: s.winner !== null,
+    });
+  }
+  return out;
+}
+
 export function dartLabel(d: Dart): string {
   if (d.m === 0) return 'Miss';
   if (d.n === 25) return d.m === 2 ? 'Bull' : '25';

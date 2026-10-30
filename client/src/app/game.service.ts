@@ -1,6 +1,6 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { Api } from './api';
-import { Dart, MatchConfig, defaultConfig, replay } from './game-logic';
+import { Dart, MatchConfig, buildHistory, defaultConfig, replay } from './game-logic';
 
 export type View = 'setup' | 'game' | 'history';
 
@@ -47,6 +47,10 @@ export class GameService {
   readonly state = computed(() => {
     const c = this.config();
     return c ? replay(c, this.darts()) : null;
+  });
+  readonly history = computed(() => {
+    const c = this.config();
+    return c ? buildHistory(c, this.darts()) : [];
   });
   readonly canUndo = computed(() => this.darts().length > 0);
 

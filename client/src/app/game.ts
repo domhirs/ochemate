@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { Dartboard } from './dartboard';
 import { GameService } from './game.service';
 import { ATC_SEQUENCE, CRICKET_NUMBERS, Dart, checkoutRoute, dartLabel, threeDartAvg } from './game-logic';
@@ -79,27 +79,51 @@ const MARKS = ['', '/', '✕', '⊗'];
           <div class="actions">
             <button type="button" (click)="game.undo()" [disabled]="!game.canUndo()">⟲ Undo</button>
             <button type="button" (click)="game.throwDart({ n: 0, m: 0 })">Miss</button>
+            <button type="button" class="icon" aria-label="Game history" (click)="showHistory.set(true)">☰</button>
           </div>
         </div>
 
         <div class="input">
           <div class="turn">
-            <span class="who">{{ s.winner === null ? s.players[s.current].name : '' }}</span>
             @for (d of s.turn; track $index) {
               <span class="chip">{{ label(d) }}</span>
             }
             @for (_ of emptySlots(); track $index) {
               <span class="chip empty">–</span>
             }
-            @if (s.lastTurn; as lt) {
-              @if (s.turn.length === 0 && s.config.mode === 'x01' && s.winner === null) {
-                <span class="last">Last: {{ s.players[lt.player].name }} {{ lt.bust ? 'BUST' : lt.total }}</span>
-              }
-            }
           </div>
           <div class="board"><app-dartboard (thrown)="game.throwDart($event)" /></div>
         </div>
       </div>
+
+      @if (showHistory()) {
+        <div class="overlay" (click)="showHistory.set(false)">
+          <div class="dialog history" role="dialog" aria-label="Game history" (click)="$event.stopPropagation()">
+            <div class="head">
+              <h2>History</h2>
+              <button type="button" class="icon" aria-label="Close history" (click)="showHistory.set(false)">✕</button>
+            </div>
+            @if (game.history().length === 0) {
+              <p class="muted">No darts thrown yet.</p>
+            }
+            <ol>
+              @for (e of reversed(); track e.index) {
+                <li [class.bust]="e.bust">
+                  <span class="t">#{{ e.turn }}</span>
+                  <span class="p">{{ s.players[e.player].name }}</span>
+                  <span class="d">{{ label(e.dart) }}</span>
+                  <span class="r">
+                    @if (e.bust) { BUST }
+                    @else if (e.win) { 🎯 Win }
+                    @else if (s.config.mode === 'x01') { {{ e.after }} left }
+                    @else if (s.config.mode === 'cricket') { {{ e.after }} pts }
+                  </span>
+                </li>
+              }
+            </ol>
+          </div>
+        </div>
+      }
 
       @if (s.winner !== null) {
         <div class="overlay">
@@ -153,13 +177,22 @@ const MARKS = ['', '/', '✕', '⊗'];
     .board { flex: 1; min-height: 0; container-type: size; display: grid; overflow: auto; }
     /* Floor keeps small segments tappable; capped by width so it never scrolls sideways. margin:auto centres without clipping on overflow. */
     app-dartboard { --size: max(min(100cqw, 100cqh), min(var(--board-min), 100cqw)); width: var(--size); height: var(--size); margin: auto; }
-    .turn { display: flex; gap: .5rem; align-items: center; flex-wrap: wrap; min-height: 2.6rem; }
-    .who { font-weight: 700; margin-right: auto; }
+    .turn { display: flex; gap: .5rem; align-items: center; justify-content: flex-end; flex-wrap: wrap; min-height: 2.6rem; }
     .chip { background: var(--surface); padding: .35rem .8rem; border-radius: 999px; font-weight: 700; min-width: 3rem; text-align: center; }
     .chip.empty { opacity: .35; }
-    .last { color: var(--muted); font-size: .85rem; flex-basis: 100%; }
     .actions { display: flex; gap: .5rem; flex: none; }
     .actions button { flex: 1; padding: .9rem; font-size: 1.1rem; min-height: 44px; }
+    .actions .icon { flex: none; width: 44px; padding: 0; }
+    .history .head { display: flex; justify-content: space-between; align-items: center; }
+    .history .head h2 { margin: 0; }
+    .history .head .icon { min-width: 44px; min-height: 44px; }
+    .history ol { list-style: none; margin: .5rem 0 0; padding: 0; }
+    .history li { display: grid; grid-template-columns: 2.5rem 1fr auto 6rem; gap: .5rem; padding: .4rem 0; border-bottom: 1px solid #0003; align-items: baseline; }
+    .history .t { color: var(--muted); font-size: .8rem; }
+    .history .d { font-weight: 700; }
+    .history .r { color: var(--muted); text-align: right; font-size: .9rem; }
+    .history .bust .r { color: #f5624d; font-weight: 700; }
+    .muted { color: var(--muted); }
     .overlay { position: fixed; inset: 0; background: #000b; display: grid; place-items: center; padding: 1rem; z-index: 10; }
     .dialog { background: var(--surface); border-radius: 18px; padding: 1.5rem; max-width: 460px; width: 100%; max-height: 90dvh; overflow-y: auto; }
     .dialog h2 { margin-top: 0; }
@@ -194,6 +227,8 @@ const MARKS = ['', '/', '✕', '⊗'];
 export class Game {
   protected readonly game = inject(GameService);
   protected readonly state = this.game.state;
+  protected readonly showHistory = signal(false);
+  protected readonly reversed = computed(() => this.game.history().map((e, index) => ({ ...e, index })).reverse());
   protected readonly cricketNumbers = CRICKET_NUMBERS;
   protected readonly atcLength = ATC_SEQUENCE.length;
 
