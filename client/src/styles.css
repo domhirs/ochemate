@@ -1,10 +1,38 @@
+/* Dark is the default. Other themes override the tokens via [data-theme] on <html>. */
 :root {
   --bg: #14171c;
   --surface: #1f242c;
   --text: #f1f3f5;
   --muted: #8d97a5;
   --accent: #3ddc84;
+  --on-accent: #07210f;
+  --control: #2c333d;
+  --fill: #ffffff0d;
+  --fill-strong: #ffffff14;
+  --line: #0003;
+  --ghost-border: #ffffff22;
+  --warn: #f5b942;
+  --danger: #f5624d;
+  --scrim: #000b;
   color-scheme: dark;
+}
+
+:root[data-theme='light'] {
+  --bg: #eef1f5;
+  --surface: #ffffff;
+  --text: #1a1f26;
+  --muted: #5d6877;
+  --accent: #0b8a43;
+  --on-accent: #ffffff;
+  --control: #e1e6ed;
+  --fill: #0000000a;
+  --fill-strong: #00000012;
+  --line: #00000018;
+  --ghost-border: #00000033;
+  --warn: #9a5b00;
+  --danger: #c4311f;
+  --scrim: #0009;
+  color-scheme: light;
 }
 
 * { box-sizing: border-box; }
@@ -23,7 +51,7 @@ html, body {
 button {
   font: inherit;
   color: var(--text);
-  background: #2c333d;
+  background: var(--control);
   border: 2px solid transparent;
   border-radius: 12px;
   padding: .7rem 1rem;
@@ -33,13 +61,13 @@ button {
 button:active:not(:disabled) { filter: brightness(1.25); }
 button:disabled { opacity: .35; cursor: default; }
 button.on { border-color: var(--accent); color: var(--accent); }
-button.primary { background: var(--accent); color: #07210f; font-weight: 700; }
-button.ghost { background: transparent; border-color: #ffffff22; }
+button.primary { background: var(--accent); color: var(--on-accent); font-weight: 700; }
+button.ghost { background: transparent; border-color: var(--ghost-border); }
 
 input {
   font: inherit;
   color: var(--text);
-  background: #2c333d;
+  background: var(--control);
   border: 2px solid transparent;
   border-radius: 12px;
   padding: .7rem 1rem;

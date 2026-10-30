@@ -124,7 +124,7 @@ const SORTS: { id: SortKey; label: string }[] = [
     h2 { margin: 0 0 .5rem; font-size: 1.15rem; }
     .hint, .muted { color: var(--muted); margin: 0 0 .75rem; }
     .none { margin: .5rem 0 0; }
-    .warn { color: #f5b942; margin: .5rem 0; }
+    .warn { color: var(--warn); margin: .5rem 0; }
     .add { display: flex; gap: .5rem; margin-bottom: .5rem; }
     .add input { flex: 1; min-width: 0; }
     .sort { display: flex; flex-wrap: wrap; gap: .4rem; align-items: center; margin-top: .75rem; }
@@ -135,15 +135,15 @@ const SORTS: { id: SortKey; label: string }[] = [
     .name { margin: 0; font-size: 1.15rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .icon { width: 3rem; min-height: 44px; padding: 0; flex: none; }
     .summary { display: grid; grid-template-columns: repeat(3, 1fr); gap: .5rem; margin: .5rem 0; text-align: center; }
-    .summary div { background: #ffffff0d; border-radius: 10px; padding: .4rem; display: flex; flex-direction: column; }
+    .summary div { background: var(--fill); border-radius: 10px; padding: .4rem; display: flex; flex-direction: column; }
     .summary b { font-size: 1.5rem; font-variant-numeric: tabular-nums; }
     .summary span { color: var(--muted); font-size: .75rem; text-transform: uppercase; letter-spacing: .06em; }
     .visits { display: flex; flex-wrap: wrap; gap: .4rem; margin: .5rem 0; }
-    .chip { background: #ffffff14; border-radius: 999px; padding: .25rem .8rem; font-size: .95rem; }
+    .chip { background: var(--fill-strong); border-radius: 999px; padding: .25rem .8rem; font-size: .95rem; }
     .chip b { color: var(--accent); font-variant-numeric: tabular-nums; }
     .chip.zero { opacity: .45; }
     .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: .4rem .75rem; margin: .5rem 0 0; }
-    .grid div { display: flex; justify-content: space-between; align-items: baseline; gap: .5rem; padding: .3rem 0; border-top: 1px solid #0003; }
+    .grid div { display: flex; justify-content: space-between; align-items: baseline; gap: .5rem; padding: .3rem 0; border-top: 1px solid var(--line); }
     dt { color: var(--muted); font-size: .85rem; }
     dd { margin: 0; font-weight: 700; font-variant-numeric: tabular-nums; }
     dd small { color: var(--muted); font-weight: 500; }

@@ -69,11 +69,11 @@ const OUT_LABEL = { straight: 'straight out', double: 'double out', master: 'mas
     .dot.on { background: var(--accent); border-color: var(--accent); }
     td { color: var(--muted); }
     td.won { color: var(--text); }
-    .cur { background: #ffffff10; }
+    .cur { background: var(--fill); }
     td.cur { color: var(--text); }
     .tot { color: var(--accent); font-size: 1.15rem; font-weight: 800; }
     tbody tr.active .txt { color: var(--accent); }
-    tbody tr + tr > * { border-top: 1px solid #0003; }
+    tbody tr + tr > * { border-top: 1px solid var(--line); }
   `,
 })
 export class MatchOverview {

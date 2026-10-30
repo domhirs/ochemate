@@ -96,7 +96,7 @@ const MODE_TITLE: Record<Mode, string> = { x01: 'X01', cricket: 'Cricket', atc: 
     th, td { padding: .5rem .4rem; text-align: right; }
     th:first-child, td:first-child { text-align: left; }
     th { color: var(--muted); font-size: .8rem; text-transform: uppercase; letter-spacing: .06em; }
-    .game { padding: .6rem 0; border-top: 1px solid #ffffff14; }
+    .game { padding: .6rem 0; border-top: 1px solid var(--line); }
     .game:first-of-type { border-top: 0; }
     .head { display: flex; gap: .75rem; align-items: baseline; }
     .head .muted { margin-right: auto; }
@@ -105,7 +105,7 @@ const MODE_TITLE: Record<Mode, string> = { x01: 'X01', cricket: 'Cricket', atc: 
     .players small { color: var(--muted); margin-left: .25rem; }
     .win { color: var(--accent); font-weight: 700; }
     .muted { color: var(--muted); }
-    .warn { color: #f5b942; }
+    .warn { color: var(--warn); }
   `,
 })
 export class History implements OnInit {

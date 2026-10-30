@@ -21,6 +21,7 @@ Status: `[ ]` open, `[~]` in progress, `[x]` done.
 | 15  | [x]    | Make the bullseye (single and double bull) bigger                                                              |
 | 16  | [x]    | Permanent players: saved player profiles, pick them in setup, link matches to them                              |
 | 17  | [x]    | Player stats: matches, wins, notable visits (180 / 140+ / 100+), averages, sortable Players overview             |
+| 18  | [x]    | Theming: dark (existing) and light theme, switch in the header, remembered per device                         |
 
 ## Details
 
@@ -146,3 +147,10 @@ Acceptance:
 - Players overview sortable by matches, wins, win %, 180s, average.
 - Stats are derived by replaying match darts, nothing new is stored.
 - Limits: stats use the 500 most recent matches the server returns; guests and matches played before profiles are not counted. Cricket and Around the Clock only count matches and wins.
+
+### 18. Theming
+
+- The existing look is the `dark` theme. `light` is new. Colors are CSS tokens (`--bg`, `--surface`, `--text`, `--muted`, `--accent`, `--on-accent`, `--control`, `--fill`, `--fill-strong`, `--line`, `--ghost-border`, `--warn`, `--danger`, `--scrim`) in `styles.css`; components use only tokens, no hex.
+- `Theme` service (`theme.ts`) sets `data-theme` on `<html>` and the `theme-color` meta, saved in localStorage `dartboard.theme`. An inline script in `index.html` applies it before first paint.
+- Header button shows the current theme icon and switches to the next one. Add a theme = one entry in `THEMES` + one token block in `styles.css`.
+- The dartboard keeps its real-board colors in every theme. The 180 celebration keeps its own colors.

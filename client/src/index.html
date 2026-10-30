@@ -10,6 +10,13 @@
   <link rel="icon" type="image/x-icon" href="favicon.ico">
   <link rel="apple-touch-icon" href="icons/icon-192x192.png">
   <link rel="manifest" href="manifest.webmanifest">
+  <script>
+    // Apply the saved theme before first paint so a light theme does not flash dark.
+    try {
+      var t = localStorage.getItem('dartboard.theme');
+      if (t) document.documentElement.setAttribute('data-theme', t);
+    } catch (e) {}
+  </script>
 </head>
 <body>
   <app-root></app-root>

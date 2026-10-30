@@ -187,24 +187,24 @@ const MARKS = ['', '/', '✕', '⊗'];
     .routes { display: flex; flex-wrap: wrap; gap: .1rem .9rem; margin-top: .2rem; font-size: .9rem; letter-spacing: .03em; }
     .route { color: var(--muted); font-weight: 600; white-space: nowrap; }
     .route:first-child { color: var(--accent); font-weight: 700; }
-    .bar { height: 8px; background: #0003; border-radius: 4px; margin: .25rem 0 .5rem; overflow: hidden; }
+    .bar { height: 8px; background: var(--line); border-radius: 4px; margin: .25rem 0 .5rem; overflow: hidden; }
     .bar div { height: 100%; background: var(--accent); }
     .cricket { width: 100%; border-collapse: collapse; background: var(--surface); text-align: center; font-size: 1.2rem; }
-    .cricket th, .cricket td { padding: .3rem .3rem; border-bottom: 1px solid #0003; }
+    .cricket th, .cricket td { padding: .3rem .3rem; border-bottom: 1px solid var(--line); }
     .cricket thead th { font-size: .9rem; }
     .cricket .pts { display: block; font-size: 1.3rem; color: var(--accent); }
     .cricket tbody th { color: var(--muted); font-size: 1rem; }
-    .cricket .active { background: #ffffff10; }
+    .cricket .active { background: var(--fill); }
     .cricket .closed { color: var(--accent); }
     .input { display: flex; flex-direction: column; gap: .5rem; min-height: 0; min-width: 0; }
     .board { flex: 1; min-height: 0; container-type: size; display: grid; overflow: hidden auto; scrollbar-width: none; }
     /* Floor keeps small segments tappable; capped by width so it never scrolls sideways. margin:auto centres without clipping on overflow. */
     app-dartboard { --size: max(min(100cqw, 100cqh), min(var(--board-min), 100cqw)); width: var(--size); height: var(--size); margin: auto; }
     div.throws { display: flex; gap: .3rem; flex-wrap: wrap; margin-top: .25rem; }
-    .chip { background: #ffffff14; padding: .1rem .55rem; border-radius: 999px; font-weight: 700; font-size: .85rem; min-width: 2.4rem; text-align: center; }
+    .chip { background: var(--fill-strong); padding: .1rem .55rem; border-radius: 999px; font-weight: 700; font-size: .85rem; min-width: 2.4rem; text-align: center; }
     .chip.empty { opacity: .35; }
-    .bust .chip:not(.empty) { color: #f5624d; }
-    .cricket .throws td { padding: .2rem; border-bottom: 1px solid #0003; }
+    .bust .chip:not(.empty) { color: var(--danger); }
+    .cricket .throws td { padding: .2rem; border-bottom: 1px solid var(--line); }
     .cricket .chip { display: inline-block; margin: .1rem; font-size: .75rem; min-width: 0; padding: .05rem .4rem; }
     .actions { display: flex; gap: .5rem; flex: none; margin-top: auto; }
     .actions button { flex: 1; padding: .9rem; font-size: 1.1rem; min-height: 44px; }
@@ -213,17 +213,17 @@ const MARKS = ['', '/', '✕', '⊗'];
     .history .head h2 { margin: 0; }
     .history .head .icon { min-width: 44px; min-height: 44px; }
     .history ol { list-style: none; margin: .5rem 0 0; padding: 0; }
-    .history li { display: grid; grid-template-columns: 2.5rem 1fr auto 6rem; gap: .5rem; padding: .4rem 0; border-bottom: 1px solid #0003; align-items: baseline; }
+    .history li { display: grid; grid-template-columns: 2.5rem 1fr auto 6rem; gap: .5rem; padding: .4rem 0; border-bottom: 1px solid var(--line); align-items: baseline; }
     .history .t { color: var(--muted); font-size: .8rem; }
     .history .d { font-weight: 700; }
     .history .r { color: var(--muted); text-align: right; font-size: .9rem; }
-    .history .bust .r { color: #f5624d; font-weight: 700; }
+    .history .bust .r { color: var(--danger); font-weight: 700; }
     .muted { color: var(--muted); }
-    .overlay { position: fixed; inset: 0; background: #000b; display: grid; place-items: center; padding: 1rem; z-index: 10; }
+    .overlay { position: fixed; inset: 0; background: var(--scrim); display: grid; place-items: center; padding: 1rem; z-index: 10; }
     .dialog { background: var(--surface); border-radius: 18px; padding: 1.5rem; max-width: 460px; width: 100%; max-height: 90dvh; overflow-y: auto; }
     .dialog h2 { margin-top: 0; }
     .stats { display: flex; flex-direction: column; gap: .3rem; color: var(--muted); margin-bottom: 1rem; }
-    .warn { color: #f5b942; }
+    .warn { color: var(--warn); }
     .row { display: flex; gap: .5rem; flex-wrap: wrap; }
     .row button { flex: 1; }
 

@@ -5,6 +5,7 @@ import { History } from './history';
 import { Players } from './players';
 import { Setup } from './setup';
 import { Sound } from './sound';
+import { Theme } from './theme';
 
 @Component({
   selector: 'app-root',
@@ -20,6 +21,7 @@ import { Sound } from './sound';
         <button type="button" [class.on]="game.view() === 'setup'" (click)="game.view.set('setup')">New</button>
         <button type="button" [class.on]="game.view() === 'history'" (click)="game.view.set('history')">History</button>
         <button type="button" class="people" [class.on]="game.view() === 'players'" aria-label="Players" (click)="game.view.set('players')"><span aria-hidden="true">👤</span><span class="lbl"> Players</span></button>
+        <button type="button" class="sound" [attr.aria-label]="'Switch to ' + theme.next().label + ' theme'" [attr.title]="'Switch to ' + theme.next().label + ' theme'" (click)="theme.cycle()">{{ theme.current().icon }}</button>
         <button type="button" class="sound" [attr.aria-pressed]="sound.enabled()" [attr.aria-label]="sound.enabled() ? 'Sound on' : 'Sound off'" (click)="sound.toggle()">{{ sound.enabled() ? '🔊' : '🔇' }}</button>
       </nav>
     </header>
@@ -63,4 +65,5 @@ import { Sound } from './sound';
 export class App {
   protected readonly game = inject(GameService);
   protected readonly sound = inject(Sound);
+  protected readonly theme = inject(Theme);
 }
