@@ -38,7 +38,8 @@ import { Setup } from './setup';
     header { display: flex; align-items: center; justify-content: space-between; padding: .5rem 1rem; background: var(--surface); }
     .logo { font-weight: 800; font-size: 1.1rem; }
     nav { display: flex; gap: .4rem; }
-    nav button { padding: .5rem 1rem; }
+    nav button { padding: .5rem 1rem; min-height: 44px; }
+    @media (max-height: 500px) { header { padding: .25rem .75rem; } nav button { min-height: 38px; padding: .25rem .8rem; } }
     main { flex: 1; min-height: 0; overflow-y: auto; }
   `,
 })

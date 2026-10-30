@@ -73,8 +73,9 @@ import { MatchConfig, Mode, OutMode } from './game-logic';
     .seg button { flex: 1; min-width: 4.5rem; }
     .hint { color: var(--muted); margin: .75rem 0 0; }
     .player { display: flex; gap: .5rem; margin-bottom: .5rem; }
-    .player input { flex: 1; }
-    .icon { width: 3rem; padding: 0; }
+    .player input { flex: 1; min-width: 0; }
+    .icon { width: 3rem; min-height: 44px; padding: 0; flex: none; }
+    @media (max-width: 480px) { :host { padding: .5rem; } .panel { padding: .75rem; } .seg button { min-width: 0; padding: .7rem .5rem; } }
     .big { padding: 1.1rem; font-size: 1.25rem; }
   `,
 })

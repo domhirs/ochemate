@@ -91,7 +91,7 @@ const MARKS = ['', '/', '✕', '⊗'];
               }
             }
           </div>
-          <app-dartboard (thrown)="game.throwDart($event)" />
+          <div class="board"><app-dartboard (thrown)="game.throwDart($event)" /></div>
           <div class="actions">
             <button type="button" (click)="game.undo()" [disabled]="!game.canUndo()">⟲ Undo</button>
             <button type="button" (click)="game.throwDart({ n: 0, m: 0 })">Miss</button>
@@ -127,15 +127,14 @@ const MARKS = ['', '/', '✕', '⊗'];
   `,
   styles: `
     :host { display: block; height: 100%; }
-    .layout { display: grid; grid-template-columns: minmax(280px, 1fr) minmax(0, 1.2fr); gap: 1rem; padding: 1rem; height: 100%; box-sizing: border-box; }
-    @media (max-width: 800px) and (orientation: portrait) { .layout { grid-template-columns: 1fr; height: auto; } }
-    .score { display: flex; flex-direction: column; gap: .75rem; overflow-y: auto; }
+    .layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: 1rem; padding: 1rem; height: 100%; }
+    .score { display: flex; flex-direction: column; gap: .75rem; overflow-y: auto; min-height: 0; }
     .card { background: var(--surface); border: 3px solid transparent; border-radius: 14px; padding: .75rem 1rem; }
     .card.active { border-color: var(--accent); }
     .top { display: flex; justify-content: space-between; align-items: baseline; }
     .name { font-weight: 700; font-size: 1.1rem; }
     .legs { color: var(--accent); font-weight: 700; }
-    .big { font-size: clamp(3rem, 9vw, 5.5rem); font-weight: 800; line-height: 1.05; font-variant-numeric: tabular-nums; }
+    .big { font-size: clamp(2.2rem, min(9vw, 12dvh), 5.5rem); font-weight: 800; line-height: 1.05; font-variant-numeric: tabular-nums; }
     .meta { display: flex; gap: 1rem; color: var(--muted); font-size: .9rem; }
     .route { margin-top: .4rem; color: var(--accent); font-weight: 700; letter-spacing: .03em; }
     .bar { height: 8px; background: #0003; border-radius: 4px; margin: .25rem 0 .5rem; overflow: hidden; }
@@ -147,22 +146,50 @@ const MARKS = ['', '/', '✕', '⊗'];
     .cricket tbody th { color: var(--muted); font-size: 1.1rem; }
     .cricket .active { background: #ffffff10; }
     .cricket .closed { color: var(--accent); }
-    .input { display: flex; flex-direction: column; gap: .5rem; min-height: 0; }
-    app-dartboard { max-height: calc(100dvh - 11rem); aspect-ratio: 1; align-self: center; width: 100%; }
+    .input { display: flex; flex-direction: column; gap: .5rem; min-height: 0; min-width: 0; }
+    .board { flex: 1; min-height: 0; container-type: size; display: grid; place-items: center; }
+    app-dartboard { width: min(100cqw, 100cqh); height: min(100cqw, 100cqh); }
     .turn { display: flex; gap: .5rem; align-items: center; flex-wrap: wrap; min-height: 2.6rem; }
     .who { font-weight: 700; margin-right: auto; }
     .chip { background: var(--surface); padding: .35rem .8rem; border-radius: 999px; font-weight: 700; min-width: 3rem; text-align: center; }
     .chip.empty { opacity: .35; }
     .last { color: var(--muted); font-size: .85rem; flex-basis: 100%; }
     .actions { display: flex; gap: .5rem; }
-    .actions button { flex: 1; padding: .9rem; font-size: 1.1rem; }
+    .actions button { flex: 1; padding: .9rem; font-size: 1.1rem; min-height: 44px; }
     .overlay { position: fixed; inset: 0; background: #000b; display: grid; place-items: center; padding: 1rem; z-index: 10; }
-    .dialog { background: var(--surface); border-radius: 18px; padding: 1.5rem; max-width: 460px; width: 100%; }
+    .dialog { background: var(--surface); border-radius: 18px; padding: 1.5rem; max-width: 460px; width: 100%; max-height: 90dvh; overflow-y: auto; }
     .dialog h2 { margin-top: 0; }
     .stats { display: flex; flex-direction: column; gap: .3rem; color: var(--muted); margin-bottom: 1rem; }
     .warn { color: #f5b942; }
     .row { display: flex; gap: .5rem; flex-wrap: wrap; }
     .row button { flex: 1; }
+
+    /* Overrides below must stay last: same specificity as the base rules above. */
+    @media (max-aspect-ratio: 1/1) {
+      .layout { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr); gap: .5rem; padding: .5rem; }
+      .score { flex-direction: row; flex-wrap: wrap; max-height: 40dvh; align-content: flex-start; gap: .5rem; }
+      .card { flex: 1 1 9rem; padding: .5rem .75rem; }
+      .cricket { font-size: clamp(1rem, 3.6dvh, 1.6rem); }
+      .cricket th, .cricket td { padding: .25rem; }
+      .cricket .pts { font-size: clamp(1.1rem, 3.6dvh, 1.8rem); }
+    }
+    @media (max-height: 500px) {
+      .layout { gap: .5rem; padding: .5rem; }
+      .card { padding: .4rem .75rem; }
+      .actions button { padding: .6rem; }
+      .turn { min-height: 2rem; gap: .35rem; }
+      .chip { padding: .15rem .6rem; }
+      .last { flex-basis: auto; }
+      .cricket th, .cricket td { padding: .2rem; }
+      .dialog { padding: 1rem; }
+      .dialog h2 { margin-bottom: .5rem; }
+    }
+    @media (max-height: 500px) and (min-aspect-ratio: 1/1) {
+      .input { display: grid; grid-template-columns: minmax(0, 1fr) 7.5rem; grid-template-rows: auto minmax(0, 1fr); column-gap: .5rem; }
+      .turn { grid-column: 1 / -1; }
+      .actions { flex-direction: column; justify-content: center; }
+      .actions button { flex: none; }
+    }
   `,
 })
 export class Game {
