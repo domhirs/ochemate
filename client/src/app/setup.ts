@@ -1,6 +1,14 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { Profile } from './api';
 import { GameService } from './game.service';
+import { Profiles } from './profiles';
 import { MatchConfig, Mode, OutMode, setsToWin } from './game-logic';
+
+interface Row {
+  name: string;
+  /** Saved profile id, null for a guest. */
+  id: string | null;
+}
 
 @Component({
   selector: 'app-setup',
@@ -65,12 +73,30 @@ import { MatchConfig, Mode, OutMode, setsToWin } from './game-logic';
       <h2>Players</h2>
       @for (p of players(); track $index; let i = $index) {
         <div class="player">
-          <input [value]="p" (input)="rename(i, $any($event.target).value)" maxlength="30" aria-label="Player name" />
+          @if (p.id) {
+            <span class="linked" title="Saved player">👤 {{ p.name }}</span>
+          } @else {
+            <input [value]="p.name" (input)="rename(i, $any($event.target).value)" maxlength="30" aria-label="Player name" />
+            @if (canSave(p)) {
+              <button type="button" class="icon" (click)="saveProfile(i)" aria-label="Save as player profile" title="Save as player profile">💾</button>
+            }
+          }
           <button type="button" class="icon" (click)="move(i, -1)" [disabled]="i === 0" aria-label="Move up">↑</button>
           <button type="button" class="icon" (click)="remove(i)" [disabled]="players().length === 1" aria-label="Remove">✕</button>
         </div>
       }
-      <button type="button" class="ghost" (click)="add()" [disabled]="players().length >= 8">+ Add player</button>
+      @if (saveError()) {
+        <p class="warn">{{ saveError() }}</p>
+      }
+      <button type="button" class="ghost" (click)="add()" [disabled]="players().length >= 8">+ Add guest</button>
+      @if (available().length) {
+        <h3>Saved players</h3>
+        <div class="seg">
+          @for (pr of available(); track pr.id) {
+            <button type="button" (click)="addProfile(pr)" [disabled]="players().length >= 8">👤 {{ pr.name }}</button>
+          }
+        </div>
+      }
     </section>
 
     <button type="button" class="primary big" (click)="go()">
@@ -90,6 +116,8 @@ import { MatchConfig, Mode, OutMode, setsToWin } from './game-logic';
     .hint { color: var(--muted); margin: .75rem 0 0; }
     .player { display: flex; gap: .5rem; margin-bottom: .5rem; }
     .player input { flex: 1; min-width: 0; }
+    .linked { flex: 1; min-width: 0; display: flex; align-items: center; padding: 0 .9rem; min-height: 44px; border-radius: 10px; background: #ffffff0d; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .warn { color: #f5b942; margin: 0 0 .5rem; }
     .icon { width: 3rem; min-height: 44px; padding: 0; flex: none; }
     @media (max-width: 480px) { :host { padding: .5rem; } .panel { padding: .75rem; } .seg button { min-width: 0; padding: .7rem .5rem; } }
     .big { padding: 1.1rem; font-size: 1.25rem; }
@@ -97,6 +125,7 @@ import { MatchConfig, Mode, OutMode, setsToWin } from './game-logic';
 })
 export class Setup {
   protected readonly game = inject(GameService);
+  private readonly profiles = inject(Profiles);
 
   protected readonly modes: { id: Mode; label: string }[] = [
     { id: 'x01', label: '301 / 501' },
@@ -117,14 +146,47 @@ export class Setup {
   protected readonly legs = signal(this.init.x01.legs);
   protected readonly sets = signal(setsToWin(this.init.x01));
   protected readonly tieBreak = signal(this.init.x01.tieBreak ?? false);
-  protected readonly players = signal<string[]>([...this.init.players]);
+  protected readonly players = signal<Row[]>(
+    this.init.players.map((name, i) => {
+      const profile = this.profiles.find(this.init.playerIds?.[i]);
+      return { name: profile?.name ?? name, id: profile?.id ?? null };
+    }),
+  );
+  protected readonly saveError = signal('');
+
+  /** Saved players not already in this game. */
+  protected readonly available = computed(() => {
+    const used = new Set(this.players().map((p) => p.id));
+    return this.profiles.list().filter((p) => !used.has(p.id));
+  });
 
   protected rename(i: number, value: string): void {
-    this.players.update((l) => l.map((p, idx) => (idx === i ? value : p)));
+    this.players.update((l) => l.map((p, idx) => (idx === i ? { ...p, name: value } : p)));
   }
 
   protected add(): void {
-    this.players.update((l) => [...l, `Player ${l.length + 1}`]);
+    this.players.update((l) => [...l, { name: `Player ${l.length + 1}`, id: null }]);
+  }
+
+  protected addProfile(p: Profile): void {
+    this.players.update((l) => (l.length >= 8 ? l : [...l, { name: p.name, id: p.id }]));
+  }
+
+  /** Only guests with a real, unused name can be saved. Default names like "Player 2" are placeholders. */
+  protected canSave(p: Row): boolean {
+    const name = p.name.trim();
+    return name.length > 0 && !/^Player \d+$/.test(name) && !this.profiles.list().some((x) => x.name.toLowerCase() === name.toLowerCase());
+  }
+
+  protected async saveProfile(i: number): Promise<void> {
+    this.saveError.set('');
+    const result = await this.profiles.add(this.players()[i].name.trim());
+    if ('profile' in result) {
+      const { id, name } = result.profile;
+      this.players.update((l) => l.map((p, idx) => (idx === i ? { name, id } : p)));
+    } else {
+      this.saveError.set(result.error === 'taken' ? 'That name is already saved.' : 'Could not save the player. Is the server reachable?');
+    }
   }
 
   protected remove(i: number): void {
@@ -140,10 +202,11 @@ export class Setup {
   }
 
   protected go(): void {
-    const names = this.players().map((p, i) => p.trim() || `Player ${i + 1}`);
+    const rows = this.players();
     const config: MatchConfig = {
       mode: this.mode(),
-      players: names,
+      players: rows.map((p, i) => (p.id ? this.profiles.find(p.id)?.name ?? p.name : p.name.trim() || `Player ${i + 1}`)),
+      playerIds: rows.map((p) => p.id),
       x01: { start: this.start(), doubleIn: this.doubleIn(), out: this.out(), legs: this.legs(), sets: this.sets(), tieBreak: this.tieBreak() },
     };
     this.game.start(config);

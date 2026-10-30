@@ -24,6 +24,8 @@ export const setsToWin = (o: X01Options): number => o.sets ?? 1;
 export interface MatchConfig {
   mode: Mode;
   players: string[];
+  /** Saved profile id per player (same order as players), null for guests. Missing on matches played before profiles. */
+  playerIds?: (string | null)[];
   x01: X01Options;
 }
 

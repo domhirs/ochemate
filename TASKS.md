@@ -19,6 +19,8 @@ Status: `[ ]` open, `[~]` in progress, `[x]` done.
 | 13  | [x]    | Use the project name dartzn in the app instead of plain Darts                                                  |
 | 14  | [x]    | Make the double and triple rings bigger so they are easier to tap                                              |
 | 15  | [x]    | Make the bullseye (single and double bull) bigger                                                              |
+| 16  | [x]    | Permanent players: saved player profiles, pick them in setup, link matches to them                              |
+| 17  | [ ]    | Player stats: matches, wins, notable visits (180 / 140+ / 100+), averages, sortable Players overview             |
 
 ## Details
 
@@ -127,3 +129,19 @@ Acceptance:
 
 - Inner bull radius 8 -> 11, outer bull radius 19 -> 25 (viewBox units; regulation is 6.35 / 15.9).
 - Single areas inside the triple ring stay wide (25 to 86).
+
+### 16. Permanent players (profiles)
+
+- Server: `players` table (id, unique case-insensitive name, 1-30 chars) with GET/POST/PATCH/DELETE `/api/players`. POST is idempotent by id. Deleting a profile keeps played matches.
+- Matches carry `config.playerIds` (profile id or null per player, same order as `players`); the server validates it; old matches without ids stay valid.
+- Setup: saved players are picked from a list, guests stay free-text and can be saved with a 💾 button. Linked rows show the profile name. Last game's linked players are restored.
+- New Players view (nav): add, rename, delete. Offline: last known list from localStorage.
+- Not included: profile avatars/colours, merging profiles, linking old matches to profiles by name.
+
+### 17. Player stats
+
+- Per profile, from all matches that link it: matches played, wins, win rate.
+- Notable visits, largest first: 180, 140-179, 100-139 (counted per visit/turn).
+- Averages (x01): 3-dart average, first-9 average, checkout % (visits started in checkout range that finished the leg), highest checkout, best leg (fewest darts), average darts per leg won.
+- Players overview sortable by matches, wins, win %, 180s, average.
+- Stats are derived by replaying match darts, nothing new is stored.

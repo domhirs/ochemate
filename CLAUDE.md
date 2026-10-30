@@ -29,7 +29,8 @@ Local test run of the built app: `STATIC_DIR=../client/dist/client/browser PORT=
 - `game.service.ts`: signals for view, config, darts; persists the running game to localStorage; on win saves via `api.ts`.
 - `api.ts`: failed saves go to a localStorage queue and are retried on next load. `POST /api/matches` is idempotent by client-generated `id`.
 - Server stores `{config, darts}` as JSON per match; the History view replays each record to compute stats. No stats are stored.
-- Components: `setup.ts`, `game.ts`, `history.ts`, `dartboard.ts` (SVG board, emits `Dart`), `app.ts` (nav shell).
+- Saved players: `players` table (id, unique name) on the server, `Profiles` service on the client. A match links a player via `config.playerIds` (same order as `players`, `null` = guest); older matches have no ids. Stats are never stored, they are derived by replaying matches per profile id.
+- Components: `setup.ts`, `game.ts`, `history.ts`, `players.ts` (manage saved players), `dartboard.ts` (SVG board, emits `Dart`), `app.ts` (nav shell).
 - Checkout suggestions: `checkoutRoute()` in `game-logic.ts`, cost-weighted so routes look human (T20 D16 over T13 D1).
 
 ## Conventions and gotchas
@@ -39,7 +40,7 @@ Local test run of the built app: `STATIC_DIR=../client/dist/client/browser PORT=
 - The board is sized with a container query (`.board` + `min(100cqw, 100cqh)`); do not give it fixed heights.
 - Production builds register a service worker. When checking a rebuild in a browser, unregister the worker and clear caches first, or you see the old build.
 - Keep every Docker service within the hosting conventions (`no-new-privileges`, `cap_drop: ALL`, limits, healthcheck, log rotation).
-- No auth by design (LAN use). Do not add endpoints that expose more than match history.
+- No auth by design (LAN use). Do not add endpoints that expose more than match history and saved player names.
 - No Python on this machine; use Node or shell for scripts.
 - No test suite yet. Scoring rules were verified with a throwaway Node script; if you touch `game-logic.ts`, re-verify bust, double-in/out, legs, cricket close/score, and checkouts.
 

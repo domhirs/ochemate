@@ -10,6 +10,12 @@ export interface MatchRecord {
   darts: Dart[];
 }
 
+export interface Profile {
+  id: string;
+  name: string;
+  createdAt: string;
+}
+
 const PENDING_KEY = 'dartboard.pending';
 
 function readPending(): MatchRecord[] {
@@ -34,6 +40,22 @@ export class Api {
 
   matches(): Promise<MatchRecord[]> {
     return firstValueFrom(this.http.get<MatchRecord[]>('/api/matches'));
+  }
+
+  players(): Promise<Profile[]> {
+    return firstValueFrom(this.http.get<Profile[]>('/api/players'));
+  }
+
+  createPlayer(name: string): Promise<Profile> {
+    return firstValueFrom(this.http.post<Profile>('/api/players', { id: crypto.randomUUID(), name }));
+  }
+
+  renamePlayer(id: string, name: string): Promise<Profile> {
+    return firstValueFrom(this.http.patch<Profile>(`/api/players/${encodeURIComponent(id)}`, { name }));
+  }
+
+  deletePlayer(id: string): Promise<unknown> {
+    return firstValueFrom(this.http.delete(`/api/players/${encodeURIComponent(id)}`));
   }
 
   remove(id: string): Promise<unknown> {
