@@ -119,12 +119,23 @@ const MARKS = ['', '/', '✕', '⊗'];
       }
 
       @if (showHistory()) {
-        <div class="overlay" (click)="showHistory.set(false)">
+        <div class="overlay" (click)="closeHistory()">
           <div class="dialog history" role="dialog" aria-label="Game history" (click)="$event.stopPropagation()">
             <div class="head">
               <h2>History</h2>
-              <button type="button" class="icon" aria-label="Close history" (click)="showHistory.set(false)">✕</button>
+              <button type="button" class="icon" aria-label="Close history" (click)="closeHistory()">✕</button>
             </div>
+            @if (confirmCancel()) {
+              <div class="confirm">
+                <p>Cancel this game? Nothing will be saved.</p>
+                <div class="row">
+                  <button type="button" (click)="confirmCancel.set(false)">Keep playing</button>
+                  <button type="button" class="danger" (click)="cancelGame()">Cancel game</button>
+                </div>
+              </div>
+            } @else {
+              <button type="button" class="ghost cancel" (click)="confirmCancel.set(true)">✕ Cancel game</button>
+            }
             @if (game.history().length === 0) {
               <p class="muted">No darts thrown yet.</p>
             }
@@ -212,6 +223,10 @@ const MARKS = ['', '/', '✕', '⊗'];
     .history .head { display: flex; justify-content: space-between; align-items: center; }
     .history .head h2 { margin: 0; }
     .history .head .icon { min-width: 44px; min-height: 44px; }
+    .history .cancel { width: 100%; margin-top: .5rem; min-height: 44px; }
+    .confirm { margin-top: .5rem; padding: .75rem; border-radius: 12px; background: var(--fill); }
+    .confirm p { margin: 0 0 .5rem; font-weight: 600; }
+    .confirm .danger { background: var(--danger); color: #fff; font-weight: 700; }
     .history ol { list-style: none; margin: .5rem 0 0; padding: 0; }
     .history li { display: grid; grid-template-columns: 2.5rem 1fr auto 6rem; gap: .5rem; padding: .4rem 0; border-bottom: 1px solid var(--line); align-items: baseline; }
     .history .t { color: var(--muted); font-size: .8rem; }
@@ -255,9 +270,21 @@ export class Game {
     return s && s.config.mode === 'x01' ? setsToWin(s.config.x01) : 1;
   });
   protected readonly showHistory = signal(false);
+  protected readonly confirmCancel = signal(false);
   protected readonly reversed = computed(() => this.game.history().map((e, index) => ({ ...e, index })).reverse());
   protected readonly cricketNumbers = CRICKET_NUMBERS;
   protected readonly atcLength = ATC_SEQUENCE.length;
+
+  protected closeHistory(): void {
+    this.showHistory.set(false);
+    this.confirmCancel.set(false);
+  }
+
+  protected cancelGame(): void {
+    this.showHistory.set(false);
+    this.confirmCancel.set(false);
+    this.game.cancel();
+  }
 
   protected readonly checkouts = computed(() => {
     const s = this.state();

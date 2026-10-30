@@ -129,6 +129,22 @@ export class GameService {
     this.persist();
   }
 
+  /** Abandons the running game without saving it. */
+  cancel(): void {
+    this.celebrations.set([]);
+    this.sound.stop();
+    this.config.set(null);
+    this.darts.set([]);
+    this.saved = false;
+    this.saveOk.set(null);
+    try {
+      localStorage.removeItem(SAVE_KEY);
+    } catch {
+      /* ignore */
+    }
+    this.view.set('setup');
+  }
+
   leave(): void {
     this.celebrations.set([]);
     this.sound.stop();
