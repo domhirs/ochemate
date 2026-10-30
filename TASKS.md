@@ -23,6 +23,7 @@ Status: `[ ]` open, `[~]` in progress, `[x]` done.
 | 17  | [x]    | Player stats: matches, wins, notable visits (180 / 140+ / 100+), averages, sortable Players overview             |
 | 18  | [x]    | Theming: dark (existing) and light theme, switch in the header, remembered per device                         |
 | 19  | [x]    | Cancel a running game early (discard, nothing saved)                                                           |
+| 20  | [x]    | Landing page: click the dartzn logo/wordmark to open it; also the start page when no game is running           |
 
 ## Details
 
@@ -161,3 +162,9 @@ Acceptance:
 - "✕ Cancel game" sits at the top of the game history dialog (☰), away from the Undo/Miss buttons so it is not tapped by accident. A second step asks for confirmation.
 - Cancelling discards the game: it is not saved to the server or the offline queue, the stored running game is removed, and the app returns to New game. The last used setup stays as the default.
 - Finished games have no cancel: they are already saved, use New game or Rematch.
+
+### 20. Landing page
+
+- New `home` view (`home.ts`): logo, wordmark, tagline, big "New game" (or "Resume game" + "New game" while a game runs), History and Players shortcuts.
+- The header logo + wordmark is a button that opens it from anywhere. Leaving a running game this way keeps it; Resume continues it.
+- App start: landing page when there is no running game. A game running before a reload still reopens directly.

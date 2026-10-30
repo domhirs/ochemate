@@ -12,7 +12,7 @@ export interface Celebration {
 
 const CELEBRATION_SECONDS = 3;
 
-export type View = 'setup' | 'game' | 'history' | 'players';
+export type View = 'home' | 'setup' | 'game' | 'history' | 'players';
 
 const SAVE_KEY = 'dartboard.current';
 const CONFIG_KEY = 'dartboard.config';
@@ -45,7 +45,7 @@ export class GameService {
   private readonly api = inject(Api);
   private readonly sound = inject(Sound);
 
-  readonly view = signal<View>('setup');
+  readonly view = signal<View>('home');
   readonly lastConfig = signal<MatchConfig>(load<MatchConfig>(CONFIG_KEY) ?? defaultConfig());
   /** Server save outcome for the finished match: null = not attempted yet. */
   readonly saveOk = signal<boolean | null>(null);

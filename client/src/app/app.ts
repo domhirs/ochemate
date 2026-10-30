@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { Game } from './game';
 import { GameService } from './game.service';
 import { History } from './history';
+import { Home } from './home';
 import { Players } from './players';
 import { Setup } from './setup';
 import { Sound } from './sound';
@@ -9,11 +10,11 @@ import { Theme } from './theme';
 
 @Component({
   selector: 'app-root',
-  imports: [Game, History, Players, Setup],
+  imports: [Game, History, Home, Players, Setup],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <header>
-      <span class="logo">🎯<span class="word"> dartzn</span></span>
+      <button type="button" class="logo" aria-label="dartzn home" (click)="game.view.set('home')">🎯<span class="word"> dartzn</span></button>
       <nav>
         @if (game.hasGame()) {
           <button type="button" [class.on]="game.view() === 'game'" (click)="game.view.set('game')">Game</button>
@@ -27,6 +28,9 @@ import { Theme } from './theme';
     </header>
     <main>
       @switch (game.view()) {
+        @case ('home') {
+          <app-home />
+        }
         @case ('setup') {
           <app-setup />
         }
@@ -45,13 +49,14 @@ import { Theme } from './theme';
   styles: `
     :host { display: flex; flex-direction: column; height: 100dvh; }
     header { display: flex; align-items: center; justify-content: space-between; padding: .5rem 1rem; background: var(--surface); }
-    .logo { font-weight: 800; font-size: 1.1rem; }
+    .logo { font-weight: 800; font-size: 1.1rem; background: transparent; border: 0; padding: .25rem .5rem; margin-left: -.5rem; min-height: 44px; border-radius: 10px; }
     nav { display: flex; gap: .4rem; }
     nav button { padding: .5rem 1rem; min-height: 44px; }
     nav .sound { padding: .5rem .75rem; min-width: 44px; }
     @media (max-width: 480px) {
       header { padding: .5rem; gap: .4rem; }
       .word { display: none; }
+      .logo { margin-left: 0; }
       nav { gap: .3rem; }
       nav button { padding: .5rem .7rem; }
       nav .sound { padding: .5rem; }
