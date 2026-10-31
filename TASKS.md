@@ -15,7 +15,7 @@ Status: `[ ]` open, `[~]` in progress, `[x]` done.
 | 9   | [x]    | TV-style match overview graphic under the players, reflecting the game setup (e.g. first to 3 sets, 3 legs per set) |
 | 10  | [x]    | Optional deciding-set tie-break (two clear legs, sudden death at 5-5) like the PDC World Championship        |
 | 11  | [x]    | "ONE HUNDRED AND EIGHTY!" celebration animation when a player hits a 180                                    |
-| 12  | [x]    | Sound on/off toggle and Ross Bray voice pack: play the 180 call with the 180 animation                       |
+| 12  | [x]    | Sound on/off toggle and voice packs: play the 180 call with the 180 animation (no pack bundled, see #12)                       |
 | 13  | [x]    | Use the project name dartzn in the app instead of plain Darts                                                  |
 | 14  | [x]    | Make the double and triple rings bigger so they are easier to tap                                              |
 | 15  | [x]    | Make the bullseye (single and double bull) bigger                                                              |
@@ -116,7 +116,7 @@ Acceptance:
 ### 12. Sound and voice packs
 
 - Voice packs in `client/public/sounds/<voice>/` with a `voice.json` that maps events to clip files (`{ "events": { "180": ["180.wav"] } }`). Adding a voice = adding a folder.
-- First pack: `ross-bray`. Only the `180` event is wired; other clips (scores, 1st/2nd/3rd) are for later tasks.
+- No pack is bundled: the first clips were third-party recordings and were removed for licensing. The default pack is `sounds/default/` (own recording of `180.wav` plus `voice.json`). Only the `180` event is wired; other events are for later tasks.
 - Sound toggle (🔊/🔇) in the header, remembered in localStorage, off by default.
 - 180 animation plays the clip and lasts at least as long as the clip. Undo or leaving the game stops it.
 - Web Audio so it works after the first tap on tablets; clips are preloaded; voice files are cached by the service worker.

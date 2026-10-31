@@ -2,7 +2,7 @@ import { Injectable, signal } from '@angular/core';
 
 const KEY = 'dartboard.sound';
 const VOICE_KEY = 'dartboard.voice';
-const DEFAULT_VOICE = 'ross-bray';
+const DEFAULT_VOICE = 'default';
 /** Events worth decoding up front so playback is instant inside the tap that triggers it. */
 const PRELOAD = ['180'];
 
