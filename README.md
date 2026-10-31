@@ -35,3 +35,13 @@ cd client && npm install && npx ng serve --proxy-config proxy.conf.json
 - No authentication: anyone who can reach the port can read and delete history. Keep it on the LAN or put it behind a reverse proxy with auth.
 - Service worker / "Add to Home Screen" install needs HTTPS (or localhost). Plain `http://<ip>:8080` works as a normal web app; for the installable PWA put it behind a TLS-terminating proxy.
 - Game state is a log of darts; scores are recomputed by replay (`client/src/app/game-logic.ts`). Undo = drop the last dart.
+
+## Credits
+
+- Wordmark font: [Exo 2](https://github.com/googlefonts/Exo-2.0) by The Exo 2 Project Authors, SIL Open Font License 1.1 (`client/public/fonts/Exo2-OFL.txt`). Self-hosted, no external requests.
+
+## License
+
+Code: [GNU AGPL-3.0-or-later](LICENSE). If you run a modified version as a network service, you must offer its source to the users of that service.
+
+The project name and logo are not covered by this licence. Third-party components keep their own licences (see Credits).
