@@ -208,8 +208,16 @@ export class Setup {
     });
   }
 
+  /** A guest typed with the name of a saved player counts as that player, names are unique ignoring case. */
+  private link(p: Row): Row {
+    if (p.id) return p;
+    const name = p.name.trim().toLowerCase();
+    const match = this.profiles.list().find((x) => x.name.toLowerCase() === name);
+    return match ? { name: match.name, id: match.id } : p;
+  }
+
   protected go(): void {
-    const rows = this.players();
+    const rows = this.players().map((p) => this.link(p));
     const config: MatchConfig = {
       mode: this.mode(),
       players: rows.map((p, i) => (p.id ? this.profiles.find(p.id)?.name ?? p.name : p.name.trim() || `Player ${i + 1}`)),
