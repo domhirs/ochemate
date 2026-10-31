@@ -155,7 +155,7 @@ Acceptance:
 
 - The existing look is the `dark` theme. `light` is new. Colors are CSS tokens (`--bg`, `--surface`, `--text`, `--text-strong` (big scores and player names), `--muted`, `--accent`, `--on-accent`, `--control`, `--fill`, `--fill-strong`, `--line`, `--ghost-border`, `--warn`, `--danger`, `--scrim`) in `styles.css`; components use only tokens, no hex.
 - `Theme` service (`theme.ts`) sets `data-theme` on `<html>` and the `theme-color` meta, saved in localStorage `dartboard.theme`. An inline script in `index.html` applies it before first paint.
-- Header button shows the current theme icon and switches to the next one. Add a theme = one entry in `THEMES` + one token block in `styles.css`.
+- Header button shows the current theme icon and opens a menu to pick a theme (closes on pick, outside tap or Escape). Add a theme = one entry in `THEMES` + one token block in `styles.css`.
 - The dartboard keeps its real-board colors in every theme. The 180 celebration keeps its own colors.
 
 ### 19. Cancel game
@@ -173,4 +173,4 @@ Acceptance:
 ### 21. Ocean theme
 
 - Third theme `ocean`: deep navy background (`#0a1628`), blue surfaces, violet accent (`#a78bfa`). Added as one `THEMES` entry plus one token block in `styles.css`.
-- The header theme button now cycles dark, light, ocean.
+- Picked from the header theme menu (dark, light, ocean).

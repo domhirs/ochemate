@@ -21,15 +21,9 @@ const KEY = 'dartboard.theme';
 export class Theme {
   readonly id = signal(initial());
   readonly current = computed(() => THEMES.find((t) => t.id === this.id()) ?? THEMES[0]);
-  /** The theme a tap switches to. */
-  readonly next = computed(() => THEMES[(THEMES.indexOf(this.current()) + 1) % THEMES.length]);
 
   constructor() {
     apply(this.current());
-  }
-
-  cycle(): void {
-    this.set(this.next().id);
   }
 
   set(id: string): void {
