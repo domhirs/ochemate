@@ -24,6 +24,17 @@ docker compose up -d --build
 
 Open `http://<server-ip>:8080` on the tablet. Data lives in the `dartboard-data` volume.
 
+## Configuration
+
+Environment variables for the server. With Docker, put them in a `.env` file next to `docker-compose.yml` (see `.env.example`).
+
+| Variable | Default | Meaning |
+| --- | --- | --- |
+| `VOICE_UPLOADS` | `on` | `off` makes the voice API read-only: no uploads, renames or deletes, and the Settings screen hides those controls. Existing voices still work. **Set it to `off` for a public deployment.** Any value other than on/off counts as off, so a typo never opens uploads. |
+| `PORT` | `8080` | Port the server listens on. |
+| `DB_PATH` | `./data/dartboard.db` | SQLite database file (matches, players, voices). |
+| `STATIC_DIR` | `./public` | Built client files to serve. |
+
 ## Develop
 
 ```sh
@@ -33,7 +44,7 @@ cd client && npm install && npx ng serve --proxy-config proxy.conf.json
 
 ## Notes
 
-- No authentication: anyone who can reach the port can read and delete history and add or delete voices (recordings up to 1 MB each, at most 20 voices). For a public deployment set `VOICE_UPLOADS=off`, which makes the voice API read-only, or put the app behind a reverse proxy with auth. Keep it on the LAN or put it behind a reverse proxy with auth.
+- No authentication: anyone who can reach the port can read and delete history and add or delete voices (recordings up to 1 MB each, at most 20 voices). Keep it on the LAN, or for a public deployment set `VOICE_UPLOADS=off` (see Configuration) and put it behind a reverse proxy with auth.
 - Service worker / "Add to Home Screen" install needs HTTPS (or localhost). Plain `http://<ip>:8080` works as a normal web app; for the installable PWA put it behind a TLS-terminating proxy.
 - Game state is a log of darts; scores are recomputed by replay (`client/src/app/game-logic.ts`). Undo = drop the last dart.
 

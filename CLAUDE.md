@@ -42,7 +42,7 @@ Local test run of the built app: `STATIC_DIR=../client/dist/client/browser PORT=
 - The board is sized with a container query (`.board` + `min(100cqw, 100cqh)`); do not give it fixed heights.
 - Production builds register a service worker. When checking a rebuild in a browser, unregister the worker and clear caches first, or you see the old build.
 - Keep every Docker service within the hosting conventions (`no-new-privileges`, `cap_drop: ALL`, limits, healthcheck, log rotation).
-- No auth by design (LAN use). Do not add endpoints that expose more than match history, saved player names and voice recordings. The voice API is the one unauthenticated upload surface, so it stays bounded: clips up to 1 MB whose type is sniffed from the bytes (never trust the content type), at most 20 voices, fixed event names, blobs in SQLite (no file paths), and `VOICE_UPLOADS=off` makes it read-only. Keep these limits when touching it.
+- No auth by design (LAN use). Do not add endpoints that expose more than match history, saved player names and voice recordings. The voice API is the one unauthenticated upload surface, so it stays bounded: clips up to 1 MB whose type is sniffed from the bytes (never trust the content type), at most 20 voices, fixed event names, blobs in SQLite (no file paths), and `VOICE_UPLOADS=off` makes it read-only (set via `.env` or the environment, wired in `docker-compose.yml`; unknown values fail closed to off). Keep these limits when touching it.
 - No Python on this machine; use Node or shell for scripts.
 - No test suite yet. Scoring rules were verified with a throwaway Node script; if you touch `game-logic.ts`, re-verify bust, double-in/out, legs, cricket close/score, and checkouts.
 

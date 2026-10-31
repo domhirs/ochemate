@@ -4,7 +4,7 @@ import { mkdirSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import express from 'express';
-import { voiceRouter } from './voices.js';
+import { uploadsSetting, voiceRouter } from './voices.js';
 
 const PORT = Number(process.env.PORT ?? 8080);
 const DB_PATH = process.env.DB_PATH ?? './data/dartboard.db';
@@ -140,4 +140,9 @@ app.use((req, res, next) => {
   res.sendFile(join(STATIC_DIR, 'index.html'));
 });
 
-app.listen(PORT, () => console.log(`dartboard listening on :${PORT}, db ${DB_PATH}`));
+app.listen(PORT, () => {
+  console.log(`dartboard listening on :${PORT}, db ${DB_PATH}`);
+  const uploads = uploadsSetting();
+  console.log(`voice uploads: ${uploads.enabled ? 'on' : 'off'}`);
+  if (uploads.invalid) console.warn(`VOICE_UPLOADS="${process.env.VOICE_UPLOADS}" is not on/off: treating it as off`);
+});

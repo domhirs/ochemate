@@ -7,6 +7,9 @@ services:
       - "8080:8080"
     volumes:
       - dartboard-data:/data
+    environment:
+      # "off" makes the voice API read-only (no uploads, renames or deletes). Use it for any public deployment.
+      VOICE_UPLOADS: "${VOICE_UPLOADS:-on}"
 
     security_opt:
       - no-new-privileges:true

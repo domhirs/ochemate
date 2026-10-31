@@ -9,7 +9,20 @@ const MAX_CLIP_BYTES = 1024 * 1024;
 const MIN_CLIP_BYTES = 64;
 const MAX_VOICES = 20;
 
-const uploadsEnabled = () => (process.env.VOICE_UPLOADS ?? 'on') !== 'off';
+const ON = new Set(['on', 'true', '1', 'yes']);
+const OFF = new Set(['off', 'false', '0', 'no']);
+
+/**
+ * VOICE_UPLOADS switch: unset or empty means on (LAN default). Any value that is not clearly on or off counts as off,
+ * so a typo can never open uploads on a public server.
+ */
+export function uploadsSetting(raw = process.env.VOICE_UPLOADS) {
+  const value = String(raw ?? '').trim().toLowerCase();
+  if (value === '' || ON.has(value)) return { enabled: true, invalid: false };
+  return { enabled: false, invalid: !OFF.has(value) };
+}
+
+const uploadsEnabled = () => uploadsSetting().enabled;
 const cleanName = (v) => (typeof v === 'string' && v.trim().length >= 1 && v.trim().length <= 30 ? v.trim() : null);
 const isUnique = (e) => /UNIQUE/i.test(String(e?.message));
 
