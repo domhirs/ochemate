@@ -11,6 +11,7 @@ Ochemate is a self-hosted dart scorer for usage on tablet or notebook. Tap the o
 - Checkout suggestions, 3-dart average, 180 counter, undo
 - Saved players with stats: matches, wins, 180s, averages, checkout %, best leg
 - Match history and per-player stats (stored in SQLite on the server)
+- Settings: themes, sound on/off and volume, and custom voices (upload your own recording for the 180 call)
 - Installable PWA, current game survives reloads
 
 Stack: Angular 20 (`client/`) and Node + Express + `node:sqlite` (`server/`).
@@ -32,7 +33,7 @@ cd client && npm install && npx ng serve --proxy-config proxy.conf.json
 
 ## Notes
 
-- No authentication: anyone who can reach the port can read and delete history. Keep it on the LAN or put it behind a reverse proxy with auth.
+- No authentication: anyone who can reach the port can read and delete history and add or delete voices (recordings up to 1 MB each, at most 20 voices). For a public deployment set `VOICE_UPLOADS=off`, which makes the voice API read-only, or put the app behind a reverse proxy with auth. Keep it on the LAN or put it behind a reverse proxy with auth.
 - Service worker / "Add to Home Screen" install needs HTTPS (or localhost). Plain `http://<ip>:8080` works as a normal web app; for the installable PWA put it behind a TLS-terminating proxy.
 - Game state is a log of darts; scores are recomputed by replay (`client/src/app/game-logic.ts`). Undo = drop the last dart.
 

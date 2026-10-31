@@ -30,6 +30,7 @@ Status: `[ ]` open, `[~]` in progress, `[x]` done.
 | 24  | [ ]    | Spike: players score their own throws on their own phone (turn gating, undo rules, host override)              |
 | 25  | [ ]    | Multi-device hardening: Traefik/SSE behaviour, rate limits, idle expiry, docs for public and self-hosted use    |
 | 26  | [ ]    | AGPL source link in the app (section 13): "Source code" link in the UI, configurable URL, set up before the repo goes public |
+| 27  | [x]    | Burger menu (History, Players, Settings) and a Settings view: theme, sound and volume, custom voices with uploads |
 
 ## Details
 
@@ -213,3 +214,11 @@ Acceptance:
 - Add a small footer on the landing page (and maybe the settings or about view): "Open source (AGPL-3.0) · Source code", linking to the repository. Add the same non-affiliation line as the README next to it: "Independent open-source project, not affiliated with or linked to any other products, brands or services."
 - The URL is one constant in one place (env or build-time config), so self-hosters and forks change it without touching components. The licence name links to the `LICENSE` file.
 - Do it when the repo goes public and the project name is final, because the link needs the final repository URL. Before going public also purge the old voice clips from git history (see commit "remove bundled third-party voice clips").
+
+### 27. Burger menu and Settings
+
+- Header: logo, New (and Game while a game runs) and a burger button at the top right. The menu holds History, Players and Settings; it closes on pick, outside tap and Escape, and the burger is highlighted while one of those views is open. The theme and sound buttons moved out of the header into Settings.
+- Settings: theme picker, sound on/off, volume, a test button, and the voice section.
+- Voices: the built-in Default (`public/sounds/default/`) plus any number of named custom voices. Each custom voice holds one recording per event (today the 180 call) and falls back to the default clip for events it has none for. Add, rename, delete, upload, replace, remove and preview are in the UI. The chosen voice is remembered per device; if it was deleted elsewhere the device falls back to Default.
+- Storage is on the server (`server/voices.js`, blobs in SQLite) so all devices share voices. Because there is no auth the API is bounded: 1 MB per clip, 20 voices, event names from a fixed list, audio type detected from the bytes (MP3, M4A, WAV, OGG), clips served with `nosniff`. `VOICE_UPLOADS=off` makes it read-only for public hosting. The client also checks that the file decodes and is at most 10 seconds before uploading.
+- Clips are cached by the service worker (data group `voice-clips`); the clip URL carries the upload time, so a replaced recording gets a new URL.

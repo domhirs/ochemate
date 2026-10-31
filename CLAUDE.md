@@ -30,7 +30,8 @@ Local test run of the built app: `STATIC_DIR=../client/dist/client/browser PORT=
 - `api.ts`: failed saves go to a localStorage queue and are retried on next load. `POST /api/matches` is idempotent by client-generated `id`.
 - Server stores `{config, darts}` as JSON per match; the History view replays each record to compute stats. No stats are stored.
 - Saved players: `players` table (id, unique name) on the server, `Profiles` service on the client. A match links a player via `config.playerIds` (same order as `players`, `null` = guest); older matches have no ids. Stats are never stored, they are derived by replaying matches per profile id.
-- Components: `setup.ts`, `game.ts`, `history.ts`, `players.ts` (manage saved players), `dartboard.ts` (SVG board, emits `Dart`), `app.ts` (nav shell).
+- Components: `setup.ts`, `game.ts`, `history.ts`, `players.ts` (manage saved players), `dartboard.ts` (SVG board, emits `Dart`), `settings.ts` (theme, sound, voices), `app.ts` (nav shell: header with New/Game and a burger menu for History, Players, Settings).
+- Voices: `sound.ts` plays the active voice, `voices.ts` talks to `/api/voices`. The built-in `default` voice is the pack in `public/sounds/default/` (voice.json + clips); custom voices and their clips live on the server (`server/voices.js`, blobs in SQLite) and fall back to the default clip per event. The active voice, volume and sound on/off are per device (`dartboard.voice`, `dartboard.volume`, `dartboard.sound`). A new playable event goes into `VOICE_EVENTS` (`voices.ts`) and `EVENTS` (`server/voices.js`).
 - Checkout suggestions: `checkoutRoute()` in `game-logic.ts`, cost-weighted so routes look human (T20 D16 over T13 D1).
 
 ## Conventions and gotchas
@@ -41,7 +42,7 @@ Local test run of the built app: `STATIC_DIR=../client/dist/client/browser PORT=
 - The board is sized with a container query (`.board` + `min(100cqw, 100cqh)`); do not give it fixed heights.
 - Production builds register a service worker. When checking a rebuild in a browser, unregister the worker and clear caches first, or you see the old build.
 - Keep every Docker service within the hosting conventions (`no-new-privileges`, `cap_drop: ALL`, limits, healthcheck, log rotation).
-- No auth by design (LAN use). Do not add endpoints that expose more than match history and saved player names.
+- No auth by design (LAN use). Do not add endpoints that expose more than match history, saved player names and voice recordings. The voice API is the one unauthenticated upload surface, so it stays bounded: clips up to 1 MB whose type is sniffed from the bytes (never trust the content type), at most 20 voices, fixed event names, blobs in SQLite (no file paths), and `VOICE_UPLOADS=off` makes it read-only. Keep these limits when touching it.
 - No Python on this machine; use Node or shell for scripts.
 - No test suite yet. Scoring rules were verified with a throwaway Node script; if you touch `game-logic.ts`, re-verify bust, double-in/out, legs, cricket close/score, and checkouts.
 
