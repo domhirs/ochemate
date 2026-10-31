@@ -61,7 +61,7 @@ import { THEMES, Theme } from './theme';
   styles: `
     :host { display: flex; flex-direction: column; height: 100dvh; }
     header { display: flex; align-items: center; justify-content: space-between; padding: .5rem 1rem; background: var(--surface); }
-    .logo { display: flex; align-items: center; gap: .5rem; font-weight: 800; font-style: italic; font-size: 1.1rem; letter-spacing: .02em; background: transparent; border: 0; padding: .25rem .5rem; margin-left: -.5rem; min-height: 44px; border-radius: 10px; }
+    .logo { display: flex; align-items: center; gap: .5rem; font-family: var(--font-brand); font-weight: 800; font-style: italic; font-size: 1.15rem; letter-spacing: .02em; background: transparent; border: 0; padding: .25rem .5rem; margin-left: -.5rem; min-height: 44px; border-radius: 10px; }
     .logo .mark { height: 2rem; width: 2rem; }
     .word b { color: var(--accent); }
     nav { display: flex; gap: .4rem; }

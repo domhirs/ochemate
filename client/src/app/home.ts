@@ -29,7 +29,7 @@ import { GameService } from './game.service';
   styles: `
     :host { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1.5rem; min-height: 100%; max-width: 420px; margin: 0 auto; padding: 1.5rem 1rem; text-align: center; }
     .mark { width: clamp(4rem, 20vmin, 7rem); height: auto; }
-    h1 { margin: .25rem 0 0; font-size: clamp(2.2rem, 10vmin, 3.5rem); letter-spacing: .02em; font-style: italic; font-weight: 800; color: var(--text-strong); }
+    h1 { margin: .25rem 0 0; font-size: clamp(2.2rem, 10vmin, 3.5rem); letter-spacing: .02em; font-family: var(--font-brand); font-style: italic; font-weight: 800; color: var(--text-strong); }
     h1 b { color: var(--accent); }
     .tag { margin: .5rem 0 0; color: var(--muted); }
     .actions { display: flex; flex-direction: column; gap: .75rem; width: 100%; }
