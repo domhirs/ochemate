@@ -18,9 +18,15 @@ Stack: Angular 20 (`client/`) and Node + Express + `node:sqlite` (`server/`).
 
 ## Screenshots
 
-| Game | Interstellar theme |
+Four themes: Dark, Light, Ocean and Interstellar.
+
+| Dark | Light |
 | --- | --- |
-| ![Game view with the dartboard](docs/screenshots/game.png) | ![Game view in the Interstellar theme](docs/screenshots/game-interstellar.png) |
+| ![Game view in the Dark theme](docs/screenshots/game-dark.png) | ![Game view in the Light theme](docs/screenshots/game-light.png) |
+
+| Ocean | Interstellar |
+| --- | --- |
+| ![Game view in the Ocean theme](docs/screenshots/game-ocean.png) | ![Game view in the Interstellar theme](docs/screenshots/game-interstellar.png) |
 
 | New game | History and stats | Settings |
 | --- | --- | --- |
