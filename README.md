@@ -16,6 +16,16 @@ Ochemate is a self-hosted dart scorer for usage on tablet or notebook. Tap the o
 
 Stack: Angular 20 (`client/`) and Node + Express + `node:sqlite` (`server/`).
 
+## Screenshots
+
+| Game | Interstellar theme |
+| --- | --- |
+| ![Game view with the dartboard](docs/screenshots/game.png) | ![Game view in the Interstellar theme](docs/screenshots/game-interstellar.png) |
+
+| New game | History and stats | Settings |
+| --- | --- | --- |
+| ![New game setup](docs/screenshots/setup.png) | ![Match history and player stats](docs/screenshots/history.png) | ![Settings with themes and voices](docs/screenshots/settings.png) |
+
 ## Run with Docker
 
 ```sh
