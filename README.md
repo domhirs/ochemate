@@ -45,3 +45,5 @@ cd client && npm install && npx ng serve --proxy-config proxy.conf.json
 Code: [GNU AGPL-3.0-or-later](LICENSE). If you run a modified version as a network service, you must offer its source to the users of that service.
 
 The project name and logo are not covered by this licence. Third-party components keep their own licences (see Credits).
+
+Ochemate is an independent open-source project and is not affiliated with, endorsed by or linked to any other products, brands or services.

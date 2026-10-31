@@ -210,6 +210,6 @@ Acceptance:
 
 - Why: AGPL-3.0 section 13 requires anyone who modifies the program and lets users use it over a network to prominently offer those users the source of their version. Shipping the link from the start means forks that host a modified version already have the mechanism and only need to point it at their own source.
 - Not required for us: the copyright holder is not bound by their own licence, and users running an unmodified copy have no duty. This is a transparency courtesy and fork-readiness.
-- Add a small footer on the landing page (and maybe the settings or about view): "Open source (AGPL-3.0) · Source code", linking to the repository.
+- Add a small footer on the landing page (and maybe the settings or about view): "Open source (AGPL-3.0) · Source code", linking to the repository. Add the same non-affiliation line as the README next to it: "Independent open-source project, not affiliated with or linked to any other products, brands or services."
 - The URL is one constant in one place (env or build-time config), so self-hosters and forks change it without touching components. The licence name links to the `LICENSE` file.
 - Do it when the repo goes public and the project name is final, because the link needs the final repository URL. Before going public also purge the old voice clips from git history (see commit "remove bundled third-party voice clips").
