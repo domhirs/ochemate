@@ -13,6 +13,7 @@ export const THEMES: ThemeDef[] = [
   { id: 'dark', label: 'Dark', icon: '🌙', chrome: '#14171c' },
   { id: 'light', label: 'Light', icon: '☀️', chrome: '#eef1f5' },
   { id: 'ocean', label: 'Ocean', icon: '🌊', chrome: '#0a1628' },
+  { id: 'interstellar', label: 'Interstellar', icon: '🪐', chrome: '#050816' },
 ];
 
 const KEY = 'dartboard.theme';

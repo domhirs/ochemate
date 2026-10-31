@@ -1,6 +1,6 @@
-# dartzn (Darts Scoreboard)
+# Ochemate (local dart scoring)
 
-Self-hosted dart scorer, used on a tablet at the board. Tap the SVG dartboard to score. Remote: `https://github.com/domhirs/dartzn.git`, branch `main`. Open work is tracked in [TASKS.md](TASKS.md).
+Self-hosted dart scorer, used on a tablet at the board. Tap the SVG dartboard to score. Formerly dartzn; the repo, Docker names and `dartboard.*` localStorage keys keep the old names on purpose (renaming would drop saved data). Remote: `https://github.com/domhirs/dartzn.git`, branch `main`. Open work is tracked in [TASKS.md](TASKS.md).
 
 ## Stack
 

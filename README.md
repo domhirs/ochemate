@@ -1,6 +1,6 @@
-# dartzn
+# Ochemate
 
-dartzn is a self-hosted dart scorer for a tablet. Tap the on-screen board to score.
+Ochemate is a self-hosted dart scorer for a tablet. Tap the on-screen board to score.
 
 - Games: X01 (301/501/701, double-in, straight/double/master-out, legs, sets and deciding-set tie-break), Cricket, Around the Clock
 - Checkout suggestions, 3-dart average, 180 counter, undo

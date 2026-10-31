@@ -56,6 +56,43 @@
   color-scheme: dark;
 }
 
+/* Deep space with the logo's cyan and red-orange. Stars and nebula are background layers only, tokens stay flat. */
+:root[data-theme='interstellar'] {
+  --bg: #050816;
+  --surface: #0d1530;
+  --text: #e8f1ff;
+  --text-strong: #ffffff;
+  --muted: #8aa0c8;
+  --accent: #22c8ff;
+  --on-accent: #02131f;
+  --control: #17234a;
+  --fill: #ffffff0d;
+  --fill-strong: #ffffff16;
+  --line: #0007;
+  --ghost-border: #22c8ff40;
+  --warn: #ffb454;
+  --danger: #ff5a3c;
+  --scrim: #02040dcc;
+  color-scheme: dark;
+}
+:root[data-theme='interstellar'] body {
+  background-image:
+    radial-gradient(1.5px 1.5px at 12% 18%, #fff 50%, transparent 51%),
+    radial-gradient(1px 1px at 27% 72%, #cfe9ff 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 41% 36%, #fff 50%, transparent 51%),
+    radial-gradient(1px 1px at 58% 84%, #cfe9ff 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 66% 12%, #ffd9d0 50%, transparent 51%),
+    radial-gradient(1px 1px at 79% 55%, #fff 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 91% 30%, #cfe9ff 50%, transparent 51%),
+    radial-gradient(1px 1px at 5% 90%, #fff 50%, transparent 51%),
+    radial-gradient(60vmax 40vmax at 100% 0%, #ff5a3c1f, transparent 70%),
+    radial-gradient(70vmax 50vmax at 0% 100%, #22c8ff1f, transparent 70%);
+  background-attachment: fixed;
+}
+
+/* The logo is made for dark backgrounds: on light it sits on a dark plate. */
+:root[data-theme='light'] img.mark { background: #050816; border-radius: 22%; padding: 2%; }
+
 * { box-sizing: border-box; }
 
 html, body {

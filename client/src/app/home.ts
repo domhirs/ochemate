@@ -6,9 +6,9 @@ import { GameService } from './game.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <section class="hero">
-      <div class="mark" aria-hidden="true">🎯</div>
-      <h1>dartzn</h1>
-      <p class="tag">Darts scoreboard. Tap the board, we do the maths.</p>
+      <img class="mark" src="brand/mark.png" alt="" />
+      <h1>OCHE<b>MATE</b></h1>
+      <p class="tag">Local dart scoring. Tap the board, we do the maths.</p>
     </section>
 
     <div class="actions">
@@ -28,8 +28,9 @@ import { GameService } from './game.service';
   `,
   styles: `
     :host { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1.5rem; min-height: 100%; max-width: 420px; margin: 0 auto; padding: 1.5rem 1rem; text-align: center; }
-    .mark { font-size: clamp(3.5rem, 18vmin, 6rem); line-height: 1; }
-    h1 { margin: .25rem 0 0; font-size: clamp(2.2rem, 10vmin, 3.5rem); letter-spacing: .02em; color: var(--text-strong); }
+    .mark { width: clamp(4rem, 20vmin, 7rem); height: auto; }
+    h1 { margin: .25rem 0 0; font-size: clamp(2.2rem, 10vmin, 3.5rem); letter-spacing: .02em; font-style: italic; font-weight: 800; color: var(--text-strong); }
+    h1 b { color: var(--accent); }
     .tag { margin: .5rem 0 0; color: var(--muted); }
     .actions { display: flex; flex-direction: column; gap: .75rem; width: 100%; }
     .big { padding: 1.1rem; font-size: 1.25rem; }
