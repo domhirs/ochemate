@@ -25,6 +25,7 @@ Status: `[ ]` open, `[~]` in progress, `[x]` done.
 | 19  | [x]    | Cancel a running game early (discard, nothing saved)                                                           |
 | 20  | [x]    | Landing page: click the dartzn logo/wordmark to open it; also the start page when no game is running           |
 | 21  | [x]    | Ocean theme: dark ocean blue with purple accents                                                               |
+| 22  | [x]    | "Go to home screen" button on the end card of a finished game                                                  |
 
 ## Details
 
@@ -174,3 +175,8 @@ Acceptance:
 
 - Third theme `ocean`: deep navy background (`#0a1628`), blue surfaces, violet accent (`#a78bfa`). Added as one `THEMES` entry plus one token block in `styles.css`.
 - Picked from the header theme menu (dark, light, ocean).
+
+### 22. Home button on the end card
+
+- The win dialog has a full-width "Go to home screen" button under Undo / Rematch / New game.
+- The result is already saved (or queued offline) when the dialog shows, so the finished game is dropped from the running state: the landing page then offers "New game", not "Resume game".

@@ -178,6 +178,7 @@ const MARKS = ['', '/', '✕', '⊗'];
               <button type="button" (click)="game.undo()">⟲ Undo last dart</button>
               <button type="button" (click)="game.rematch()">Rematch</button>
               <button type="button" class="primary" (click)="game.leave()">New game</button>
+              <button type="button" class="home" (click)="game.goHome()">🏠 Go to home screen</button>
             </div>
           </div>
         </div>
@@ -241,6 +242,7 @@ const MARKS = ['', '/', '✕', '⊗'];
     .warn { color: var(--warn); }
     .row { display: flex; gap: .5rem; flex-wrap: wrap; }
     .row button { flex: 1; }
+    .row .home { flex: 1 1 100%; }
 
     /* Overrides below must stay last: same specificity as the base rules above. */
     @media (max-aspect-ratio: 1/1) {

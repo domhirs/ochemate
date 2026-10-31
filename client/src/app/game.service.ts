@@ -131,6 +131,15 @@ export class GameService {
 
   /** Abandons the running game without saving it. */
   cancel(): void {
+    this.discard('setup');
+  }
+
+  /** From the end card: the result is already saved, so drop the finished game and show the landing page. */
+  goHome(): void {
+    this.discard('home');
+  }
+
+  private discard(view: View): void {
     this.celebrations.set([]);
     this.sound.stop();
     this.config.set(null);
@@ -142,7 +151,7 @@ export class GameService {
     } catch {
       /* ignore */
     }
-    this.view.set('setup');
+    this.view.set(view);
   }
 
   leave(): void {
