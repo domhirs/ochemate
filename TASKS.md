@@ -29,6 +29,7 @@ Status: `[ ]` open, `[~]` in progress, `[x]` done.
 | 23  | [ ]    | Live scorecard for other devices: host shows a QR code, phones join with a unique name and follow the running game live (read-only) |
 | 24  | [ ]    | Spike: players score their own throws on their own phone (turn gating, undo rules, host override)              |
 | 25  | [ ]    | Multi-device hardening: Traefik/SSE behaviour, rate limits, idle expiry, docs for public and self-hosted use    |
+| 26  | [ ]    | AGPL source link in the app (section 13): "Source code" link in the UI, configurable URL, set up before the repo goes public |
 
 ## Details
 
@@ -204,3 +205,11 @@ Acceptance:
 - SSE through Traefik (no response buffering, keepalive comments); the service worker must not cache or intercept `/api` streams.
 - Limits: max live games, max 8 seats, body size, idle expiry of abandoned games, per-IP rate limit on join. Check the Docker limits still hold with open SSE connections.
 - Docs: README section for self-hosting (LAN, `PUBLIC_URL`) and public hosting behind Traefik on a subdomain.
+
+### 26. AGPL source link in the app
+
+- Why: AGPL-3.0 section 13 requires anyone who modifies the program and lets users use it over a network to prominently offer those users the source of their version. Shipping the link from the start means forks that host a modified version already have the mechanism and only need to point it at their own source.
+- Not required for us: the copyright holder is not bound by their own licence, and users running an unmodified copy have no duty. This is a transparency courtesy and fork-readiness.
+- Add a small footer on the landing page (and maybe the settings or about view): "Open source (AGPL-3.0) · Source code", linking to the repository.
+- The URL is one constant in one place (env or build-time config), so self-hosters and forks change it without touching components. The licence name links to the `LICENSE` file.
+- Do it when the repo goes public and the project name is final, because the link needs the final repository URL. Before going public also purge the old voice clips from git history (see commit "remove bundled third-party voice clips").
