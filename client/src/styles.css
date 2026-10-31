@@ -37,6 +37,25 @@
   color-scheme: light;
 }
 
+:root[data-theme='ocean'] {
+  --bg: #0a1628;
+  --surface: #122440;
+  --text: #e6ecf8;
+  --text-strong: #eef2fb;
+  --muted: #8a9bbd;
+  --accent: #a78bfa;
+  --on-accent: #1a0b3a;
+  --control: #1c3258;
+  --fill: #ffffff0d;
+  --fill-strong: #ffffff14;
+  --line: #0006;
+  --ghost-border: #ffffff26;
+  --warn: #f5b942;
+  --danger: #ff7a6b;
+  --scrim: #020812cc;
+  color-scheme: dark;
+}
+
 * { box-sizing: border-box; }
 
 html, body {

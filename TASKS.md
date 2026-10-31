@@ -24,6 +24,7 @@ Status: `[ ]` open, `[~]` in progress, `[x]` done.
 | 18  | [x]    | Theming: dark (existing) and light theme, switch in the header, remembered per device                         |
 | 19  | [x]    | Cancel a running game early (discard, nothing saved)                                                           |
 | 20  | [x]    | Landing page: click the dartzn logo/wordmark to open it; also the start page when no game is running           |
+| 21  | [x]    | Ocean theme: dark ocean blue with purple accents                                                               |
 
 ## Details
 
@@ -168,3 +169,8 @@ Acceptance:
 - New `home` view (`home.ts`): logo, wordmark, tagline, big "New game" (or "Resume game" + "New game" while a game runs), History and Players shortcuts.
 - The header logo + wordmark is a button that opens it from anywhere. Leaving a running game this way keeps it; Resume continues it.
 - App start: landing page when there is no running game. A game running before a reload still reopens directly.
+
+### 21. Ocean theme
+
+- Third theme `ocean`: deep navy background (`#0a1628`), blue surfaces, violet accent (`#a78bfa`). Added as one `THEMES` entry plus one token block in `styles.css`.
+- The header theme button now cycles dark, light, ocean.
