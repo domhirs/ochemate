@@ -1,5 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnInit, computed, inject, signal } from '@angular/core';
 import { Voice } from './api';
+import { BRAND } from './brand';
+import { Legal } from './legal';
 import { DEFAULT_VOICE, Sound } from './sound';
 import { THEMES, Theme } from './theme';
 import { VOICE_EVENTS, VoiceError, Voices, describeVoiceError } from './voices';
@@ -14,6 +16,7 @@ interface Status {
 
 @Component({
   selector: 'app-settings',
+  imports: [Legal],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <input
@@ -119,6 +122,12 @@ interface Status {
         <p class="warn" role="status">{{ describe(p) }}</p>
       }
     </section>
+
+    <section class="panel">
+      <h2>About</h2>
+      <p class="hint">{{ brand.name }} is free software under the AGPL-3.0. {{ brand.tagline }}</p>
+      <app-legal />
+    </section>
   `,
   styles: `
     :host { display: flex; flex-direction: column; gap: 1rem; max-width: 640px; margin: 0 auto; padding: 1rem; }
@@ -155,6 +164,7 @@ interface Status {
   `,
 })
 export class Settings implements OnInit {
+  protected readonly brand = BRAND;
   protected readonly theme = inject(Theme);
   protected readonly sound = inject(Sound);
   protected readonly voices = inject(Voices);

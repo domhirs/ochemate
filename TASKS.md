@@ -29,7 +29,7 @@ Status: `[ ]` open, `[~]` in progress, `[x]` done.
 | 23  | [ ]    | Live scorecard for other devices: host shows a QR code, phones join with a unique name and follow the running game live (read-only) |
 | 24  | [ ]    | Spike: players score their own throws on their own phone (turn gating, undo rules, host override)              |
 | 25  | [ ]    | Multi-device hardening: Traefik/SSE behaviour, rate limits, idle expiry, docs for public and self-hosted use    |
-| 26  | [ ]    | AGPL source link in the app (section 13): "Source code" link in the UI, configurable URL, set up before the repo goes public |
+| 26  | [x]    | AGPL source link in the app (section 13): "Source code" and "License" links plus a non-affiliation notice, one place to configure the URLs |
 | 27  | [x]    | Burger menu (History, Players, Settings) and a Settings view: theme, sound and volume, custom voices with uploads |
 
 ## Details
@@ -213,7 +213,8 @@ Acceptance:
 - Not required for us: the copyright holder is not bound by their own licence, and users running an unmodified copy have no duty. This is a transparency courtesy and fork-readiness.
 - Add a small footer on the landing page (and maybe the settings or about view): "Open source (AGPL-3.0) · Source code", linking to the repository. Add the same non-affiliation line as the README next to it: "Independent open-source project, not affiliated with or linked to any other products, brands or services."
 - The URL is one constant in one place (env or build-time config), so self-hosters and forks change it without touching components. The licence name links to the `LICENSE` file.
-- Do it when the repo goes public and the project name is final, because the link needs the final repository URL. Before going public also purge the old voice clips from git history (see commit "remove bundled third-party voice clips").
+- Done: `legal.ts` shows "Open source (AGPL-3.0) · Source code · License" and the non-affiliation line on the landing page and in a new Settings > About panel. URLs and text live in `BRAND` (`brand.ts`). Links open in a new tab with `noopener noreferrer`. The repository is private for now, so the links only work for people with access until it goes public.
+- Still before going public: the old voice clips were purged from history (done); decide `VOICE_UPLOADS` for the public deployment (see #27).
 
 ### 27. Burger menu and Settings
 

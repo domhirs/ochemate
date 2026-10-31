@@ -53,6 +53,7 @@ The in-app name, wordmark and tagline live in `client/src/app/brand.ts`. Everyth
 - `client/src/index.html` (`<title>`), `client/public/manifest.webmanifest` (`name`, `short_name`)
 - Logo and icons: `client/public/brand/mark.png`, `client/public/icons/*`, `client/public/favicon.ico`, `client/public/favicon.svg`
 - README title, banners in `docs/brand/` (regenerate; the lettering is outlined paths) and the heading line of this file
+- Source links: `BRAND.source` in `brand.ts` (repository and licence URLs), shown by `legal.ts` on the landing page and in Settings > About. AGPL section 13 asks a modified copy that runs as a network service to offer its own source, so a fork that hosts one points these at its own repository.
 - Wordmark font if the lettering changes (`client/public/fonts/`, credit in README)
 - Do not rename the internal identifiers: `dartboard.*` localStorage keys, the `dartboard` Docker service, image and `dartboard-data` volume, `dartboard.db`. They are a generic namespace, not the product name, and changing them orphans stored data (browser state, the match history in the Docker volume).
 

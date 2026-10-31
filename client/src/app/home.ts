@@ -1,9 +1,11 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { BRAND } from './brand';
 import { GameService } from './game.service';
+import { Legal } from './legal';
 
 @Component({
   selector: 'app-home',
+  imports: [Legal],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <section class="hero">
@@ -26,6 +28,8 @@ import { GameService } from './game.service';
     </div>
 
     <p class="modes">X01 · Cricket · Around the Clock</p>
+
+    <app-legal />
   `,
   styles: `
     :host { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1.5rem; min-height: 100%; max-width: 420px; margin: 0 auto; padding: 1.5rem 1rem; text-align: center; }
@@ -38,7 +42,7 @@ import { GameService } from './game.service';
     .pair { display: flex; gap: .75rem; }
     .pair button { flex: 1; min-height: 52px; }
     .modes { margin: 0; color: var(--muted); font-size: .85rem; letter-spacing: .06em; }
-    @media (max-height: 500px) { :host { flex-direction: row; flex-wrap: wrap; gap: 1rem; max-width: 760px; } .hero { flex: 1 1 14rem; } .actions { flex: 1 1 14rem; } .modes { width: 100%; } }
+    @media (max-height: 500px) { :host { flex-direction: row; flex-wrap: wrap; gap: 1rem; max-width: 760px; } .hero { flex: 1 1 14rem; } .actions { flex: 1 1 14rem; } .modes, app-legal { width: 100%; } }
   `,
 })
 export class Home {
