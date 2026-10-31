@@ -4,6 +4,7 @@ import { mkdirSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import express from 'express';
+import { voiceRouter } from './voices.js';
 
 const PORT = Number(process.env.PORT ?? 8080);
 const DB_PATH = process.env.DB_PATH ?? './data/dartboard.db';
@@ -123,6 +124,8 @@ app.delete('/api/players/:id', (req, res) => {
   deletePlayer.run(req.params.id);
   res.status(204).end();
 });
+
+app.use('/api/voices', voiceRouter(db));
 
 app.use('/api', (_req, res) => res.status(404).json({ error: 'not found' }));
 

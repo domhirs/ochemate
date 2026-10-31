@@ -20,7 +20,7 @@ ENV NODE_ENV=production \
     STATIC_DIR=/app/public
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
-COPY server/package.json server/server.js ./
+COPY server/package.json server/server.js server/voices.js ./
 COPY --from=client /client/dist/client/browser ./public
 RUN mkdir /data && chown node:node /data
 USER node
