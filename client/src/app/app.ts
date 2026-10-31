@@ -25,9 +25,9 @@ interface MenuItem {
       <button type="button" class="logo" [attr.aria-label]="brand.name + ' home'" (click)="game.view.set('home')"><img class="mark" src="brand/mark.png" alt="" /><span class="word">{{ brand.wordmark.lead }}<b>{{ brand.wordmark.accent }}</b></span></button>
       <nav>
         @if (game.hasGame()) {
-          <button type="button" [class.on]="game.view() === 'game'" (click)="game.view.set('game')">Game</button>
+          <button type="button" [class.on]="game.view() === 'game'" (click)="game.view.set('game')">Back to Game</button>
         }
-        <button type="button" [class.on]="game.view() === 'setup'" (click)="game.view.set('setup')">New</button>
+        <button type="button" [class.on]="game.view() === 'setup'" (click)="game.view.set('setup')">New Game</button>
         <div class="burger">
           <button type="button" class="menu-btn" [class.on]="inMenuView()" aria-haspopup="menu" [attr.aria-expanded]="menuOpen()" aria-label="Menu" (click)="menuOpen.set(!menuOpen())">☰</button>
           @if (menuOpen()) {
