@@ -26,6 +26,9 @@ Status: `[ ]` open, `[~]` in progress, `[x]` done.
 | 20  | [x]    | Landing page: click the dartzn logo/wordmark to open it; also the start page when no game is running           |
 | 21  | [x]    | Ocean theme: dark ocean blue with purple accents                                                               |
 | 22  | [x]    | "Go to home screen" button on the end card of a finished game                                                  |
+| 23  | [ ]    | Live scorecard for other devices: host shows a QR code, phones join with a unique name and follow the running game live (read-only) |
+| 24  | [ ]    | Spike: players score their own throws on their own phone (turn gating, undo rules, host override)              |
+| 25  | [ ]    | Multi-device hardening: Traefik/SSE behaviour, rate limits, idle expiry, docs for public and self-hosted use    |
 
 ## Details
 
@@ -180,3 +183,24 @@ Acceptance:
 
 - The win dialog has a full-width "Go to home screen" button under Undo / Rematch / New game.
 - The result is already saved (or queued offline) when the dialog shows, so the finished game is dropped from the running state: the landing page then offers "New game", not "Resume game".
+
+### 23. Live scorecard for other devices
+
+- Server owns live games: in-memory store persisted to a `live_games` table, so a restart does not lose a running game. Single-tablet mode stays as is and works offline; a live game is an opt-in extension of it.
+- Host starts a live game from a running or new game and gets a QR code (client-side generator, no scanner in the app: the phone camera opens the link). Link: `<origin>/#/join/<code>`. The code is a random 128-bit id, there is no endpoint that lists games.
+- Phones open the link, enter a name and get a seat token (kept in localStorage, so a reload or a sleeping phone rejoins the same seat). Names are unique per game, case-insensitive; the server answers 409 on a clash. A name equal to a saved player claims that profile (once per game) and links `playerIds`.
+- Updates via SSE (`GET /api/games/:code/events`): full snapshot on connect, then new darts. Phones render the existing scoreboard read-only from `replay(config, darts)`; only the host posts darts (host token).
+- QR base URL: the origin the host opened, or `PUBLIC_URL` when set (needed when the tablet runs on `localhost`). Must work self-hosted on a LAN and public behind Traefik on its own subdomain.
+- Update the CLAUDE.md rule about exposed data: live games expose names and darts, but only to holders of the code.
+
+### 24. Spike: own-device scoring
+
+- Question: can each player throw on their own phone without accounts? Prototype `POST /api/games/:code/darts {seatToken, seq}`: accepted only for the current seat and when `seq` equals the dart count, else 409 and the client resyncs.
+- Decide: who may undo (host, or last thrower), host override for absent or offline seats, kick, what a phone shows when it is not its turn, and whether the board is usable on a phone in portrait.
+- Output: short findings and a go / no-go with an effort estimate. Builds on #23.
+
+### 25. Multi-device hardening
+
+- SSE through Traefik (no response buffering, keepalive comments); the service worker must not cache or intercept `/api` streams.
+- Limits: max live games, max 8 seats, body size, idle expiry of abandoned games, per-IP rate limit on join. Check the Docker limits still hold with open SSE connections.
+- Docs: README section for self-hosting (LAN, `PUBLIC_URL`) and public hosting behind Traefik on a subdomain.
