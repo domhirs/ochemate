@@ -1,0 +1,15 @@
+Voice pack "Default": audio files in this folder
+
+Copyright (c) 2026 domhirs. All rights reserved except as granted below.
+
+The audio files in this folder are licensed under the Creative Commons
+Attribution-NonCommercial-NoDerivatives 4.0 International licence
+(CC BY-NC-ND 4.0): https://creativecommons.org/licenses/by-nc-nd/4.0/
+
+In short: you may copy and redistribute the unmodified files, with credit,
+for non-commercial purposes. You may not use them commercially or distribute
+modified versions.
+
+These files are not covered by the AGPL-3.0 that applies to the source code of
+this repository. To use your own sounds, replace the audio files in this folder
+with your own recordings and adjust voice.json if the file names differ.
