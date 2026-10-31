@@ -16,6 +16,28 @@ export interface Profile {
   createdAt: string;
 }
 
+export interface VoiceClip {
+  mime: string;
+  size: number;
+  updatedAt: string;
+}
+
+export interface Voice {
+  id: string;
+  name: string;
+  createdAt: string;
+  /** Uploaded clip per event id (for example `180`). */
+  clips: Record<string, VoiceClip>;
+}
+
+export interface VoiceLibrary {
+  /** False when the server runs with VOICE_UPLOADS=off: voices are read-only. */
+  uploads: boolean;
+  events: string[];
+  maxClipBytes: number;
+  voices: Voice[];
+}
+
 const PENDING_KEY = 'dartboard.pending';
 
 function readPending(): MatchRecord[] {
@@ -56,6 +78,34 @@ export class Api {
 
   deletePlayer(id: string): Promise<unknown> {
     return firstValueFrom(this.http.delete(`/api/players/${encodeURIComponent(id)}`));
+  }
+
+  voices(): Promise<VoiceLibrary> {
+    return firstValueFrom(this.http.get<VoiceLibrary>('/api/voices'));
+  }
+
+  createVoice(name: string): Promise<Voice> {
+    return firstValueFrom(this.http.post<Voice>('/api/voices', { id: crypto.randomUUID(), name }));
+  }
+
+  renameVoice(id: string, name: string): Promise<Voice> {
+    return firstValueFrom(this.http.patch<Voice>(`/api/voices/${encodeURIComponent(id)}`, { name }));
+  }
+
+  deleteVoice(id: string): Promise<unknown> {
+    return firstValueFrom(this.http.delete(`/api/voices/${encodeURIComponent(id)}`));
+  }
+
+  uploadClip(id: string, event: string, file: Blob): Promise<VoiceClip> {
+    return firstValueFrom(
+      this.http.put<VoiceClip>(`/api/voices/${encodeURIComponent(id)}/clips/${encodeURIComponent(event)}`, file, {
+        headers: { 'Content-Type': file.type || 'application/octet-stream' },
+      }),
+    );
+  }
+
+  deleteClip(id: string, event: string): Promise<unknown> {
+    return firstValueFrom(this.http.delete(`/api/voices/${encodeURIComponent(id)}/clips/${encodeURIComponent(event)}`));
   }
 
   remove(id: string): Promise<unknown> {

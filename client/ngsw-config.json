@@ -27,5 +27,12 @@
         ]
       }
     }
+  ],
+  "dataGroups": [
+    {
+      "name": "voice-clips",
+      "urls": ["/api/voices/*/clips/*"],
+      "cacheConfig": { "strategy": "performance", "maxSize": 40, "maxAge": "30d" }
+    }
   ]
 }

@@ -1,28 +1,31 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, inject, signal } from '@angular/core';
+import { VOICE_EVENTS, Voices } from './voices';
 
 const KEY = 'dartboard.sound';
 const VOICE_KEY = 'dartboard.voice';
-const DEFAULT_VOICE = 'default';
-/** Events worth decoding up front so playback is instant inside the tap that triggers it. */
-const PRELOAD = ['180'];
+const VOLUME_KEY = 'dartboard.volume';
+export const DEFAULT_VOICE = 'default';
 
-interface Voice {
+interface Manifest {
   name: string;
   events: Record<string, string[]>;
 }
 
 /**
- * Voice-pack playback. Packs live in `public/sounds/<voice>/voice.json` and map event names to clip files,
- * so a new voice is a new folder and no code change. Web Audio keeps playback allowed on tablets once any tap unlocked it.
+ * Voice playback. The built-in `default` voice is a pack in `public/sounds/default/voice.json`; custom voices live on
+ * the server (see Voices) and fall back to the default clip for events they have no recording for. Web Audio keeps
+ * playback allowed on tablets once any tap unlocked it.
  */
 @Injectable({ providedIn: 'root' })
 export class Sound {
+  private readonly voices = inject(Voices);
+
   readonly enabled = signal(read(KEY) === 'on');
   readonly voice = signal(read(VOICE_KEY) ?? DEFAULT_VOICE);
+  readonly volume = signal(clamp(Number(read(VOLUME_KEY) ?? 1)));
 
   private ctx: AudioContext | null = null;
-  private manifest: Voice | null = null;
-  private manifestVoice = '';
+  private manifest: Manifest | null = null;
   private readonly buffers = new Map<string, AudioBuffer>();
   private current: AudioBufferSourceNode | null = null;
 
@@ -41,24 +44,46 @@ export class Sound {
     else this.stop();
   }
 
+  setVolume(value: number): void {
+    const v = clamp(value);
+    this.volume.set(v);
+    write(VOLUME_KEY, String(v));
+  }
+
+  async select(id: string): Promise<void> {
+    this.voice.set(id);
+    write(VOICE_KEY, id);
+    await this.prepare();
+  }
+
   /** Plays a random clip for the event. Returns its length in seconds, or 0 when nothing played. */
   play(event: string): number {
-    if (!this.enabled() || !this.ctx || !this.manifest) return 0;
-    const clips = this.manifest.events[event] ?? [];
-    const loaded = clips.map((f) => this.buffers.get(this.url(f))).filter((b): b is AudioBuffer => !!b);
+    if (!this.enabled() || !this.ctx) return 0;
+    const loaded = this.clipUrls(event)
+      .map((u) => this.buffers.get(u))
+      .filter((b): b is AudioBuffer => !!b);
     if (!loaded.length) return 0;
     const buffer = loaded[Math.floor(Math.random() * loaded.length)];
     if (this.ctx.state !== 'running') void this.ctx.resume();
     this.stop();
+    const gain = this.ctx.createGain();
+    gain.gain.value = this.volume();
+    gain.connect(this.ctx.destination);
     const src = this.ctx.createBufferSource();
     src.buffer = buffer;
-    src.connect(this.ctx.destination);
+    src.connect(gain);
     src.onended = () => {
       if (this.current === src) this.current = null;
     };
     src.start();
     this.current = src;
     return buffer.duration;
+  }
+
+  /** Settings test button: loads the active voice inside the tap, then plays the event once. */
+  async test(event: string): Promise<number> {
+    await this.prepare();
+    return this.play(event);
   }
 
   stop(): void {
@@ -70,26 +95,34 @@ export class Sound {
     this.current = null;
   }
 
-  private url(file: string): string {
-    return `sounds/${this.voice()}/${file}`;
-  }
-
-  private async prepare(): Promise<void> {
+  /** Loads the active voice into memory. Call again after its recordings changed. */
+  async prepare(): Promise<void> {
     try {
       this.ctx ??= new AudioContext();
       if (this.ctx.state !== 'running') await this.ctx.resume();
-      const voice = this.voice();
-      if (!this.manifest || this.manifestVoice !== voice) {
-        const res = await fetch(`sounds/${voice}/voice.json`);
-        if (!res.ok) return;
-        this.manifest = (await res.json()) as Voice;
-        this.manifestVoice = voice;
+      if (!this.manifest) {
+        const res = await fetch(`sounds/${DEFAULT_VOICE}/voice.json`);
+        if (res.ok) this.manifest = (await res.json()) as Manifest;
       }
-      const files = PRELOAD.flatMap((e) => this.manifest?.events[e] ?? []);
-      await Promise.all(files.map((f) => this.load(this.url(f))));
+      if (this.voice() !== DEFAULT_VOICE) {
+        if (!this.voices.loaded()) await this.voices.refresh();
+        // Only a server that answered can say the voice is gone; an unreachable one must not reset the choice.
+        if (this.voices.loaded() && !this.voices.find(this.voice())) {
+          this.voice.set(DEFAULT_VOICE);
+          write(VOICE_KEY, DEFAULT_VOICE);
+        }
+      }
+      await Promise.all(VOICE_EVENTS.flatMap((e) => this.clipUrls(e.id)).map((u) => this.load(u)));
     } catch {
       /* sound is optional: missing files or no audio support must never break the game */
     }
+  }
+
+  private clipUrls(event: string): string[] {
+    const id = this.voice();
+    const custom = id === DEFAULT_VOICE ? undefined : this.voices.find(id)?.clips[event];
+    if (custom) return [`api/voices/${encodeURIComponent(id)}/clips/${encodeURIComponent(event)}?v=${encodeURIComponent(custom.updatedAt)}`];
+    return (this.manifest?.events[event] ?? []).map((f) => `sounds/${DEFAULT_VOICE}/${f}`);
   }
 
   private async load(url: string): Promise<void> {
@@ -99,6 +132,8 @@ export class Sound {
     this.buffers.set(url, await this.ctx.decodeAudioData(await res.arrayBuffer()));
   }
 }
+
+const clamp = (v: number): number => (Number.isFinite(v) ? Math.min(1, Math.max(0, v)) : 1);
 
 function read(key: string): string | null {
   try {

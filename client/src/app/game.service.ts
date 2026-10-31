@@ -12,7 +12,7 @@ export interface Celebration {
 
 const CELEBRATION_SECONDS = 3;
 
-export type View = 'home' | 'setup' | 'game' | 'history' | 'players';
+export type View = 'home' | 'setup' | 'game' | 'history' | 'players' | 'settings';
 
 const SAVE_KEY = 'dartboard.current';
 const CONFIG_KEY = 'dartboard.config';
