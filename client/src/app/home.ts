@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { BRAND } from './brand';
 import { GameService } from './game.service';
 
 @Component({
@@ -7,8 +8,8 @@ import { GameService } from './game.service';
   template: `
     <section class="hero">
       <img class="mark" src="brand/mark.png" alt="" />
-      <h1>OCHE<b>MATE</b></h1>
-      <p class="tag">Local dart scoring. Tap the board, we do the maths.</p>
+      <h1>{{ brand.wordmark.lead }}<b>{{ brand.wordmark.accent }}</b></h1>
+      <p class="tag">{{ brand.tagline }}</p>
     </section>
 
     <div class="actions">
@@ -41,5 +42,6 @@ import { GameService } from './game.service';
   `,
 })
 export class Home {
+  protected readonly brand = BRAND;
   protected readonly game = inject(GameService);
 }

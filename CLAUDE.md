@@ -45,6 +45,16 @@ Local test run of the built app: `STATIC_DIR=../client/dist/client/browser PORT=
 - No Python on this machine; use Node or shell for scripts.
 - No test suite yet. Scoring rules were verified with a throwaway Node script; if you touch `game-logic.ts`, re-verify bust, double-in/out, legs, cricket close/score, and checkouts.
 
+## Renaming
+
+The in-app name, wordmark and tagline live in `client/src/app/brand.ts`. Everything else that carries the name must be changed by hand:
+
+- `client/src/index.html` (`<title>`), `client/public/manifest.webmanifest` (`name`, `short_name`)
+- Logo and icons: `client/public/brand/mark.png`, `client/public/icons/*`, `client/public/favicon.ico`, `client/public/favicon.svg`
+- README title, banners in `docs/brand/` (regenerate; the lettering is outlined paths) and the heading line of this file
+- Wordmark font if the lettering changes (`client/public/fonts/`, credit in README)
+- Not renamed on purpose: repo and Docker names, `dartboard.*` localStorage keys (changing them drops saved data)
+
 ## Git
 
 - Conventional Commits (`feat:`, `fix:`, `chore:`, `docs:`).

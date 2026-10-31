@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { BRAND } from './brand';
 import { Game } from './game';
 import { GameService } from './game.service';
 import { History } from './history';
@@ -14,7 +15,7 @@ import { THEMES, Theme } from './theme';
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <header>
-      <button type="button" class="logo" aria-label="Ochemate home" (click)="game.view.set('home')"><img class="mark" src="brand/mark.png" alt="" /><span class="word">OCHE<b>MATE</b></span></button>
+      <button type="button" class="logo" [attr.aria-label]="brand.name + ' home'" (click)="game.view.set('home')"><img class="mark" src="brand/mark.png" alt="" /><span class="word">{{ brand.wordmark.lead }}<b>{{ brand.wordmark.accent }}</b></span></button>
       <nav>
         @if (game.hasGame()) {
           <button type="button" [class.on]="game.view() === 'game'" (click)="game.view.set('game')">Game</button>
@@ -86,6 +87,7 @@ import { THEMES, Theme } from './theme';
   `,
 })
 export class App {
+  protected readonly brand = BRAND;
   protected readonly game = inject(GameService);
   protected readonly sound = inject(Sound);
   protected readonly theme = inject(Theme);
