@@ -1,6 +1,6 @@
 # Ochemate (local dart scoring)
 
-Self-hosted dart scorer, used on a tablet at the board. Tap the SVG dartboard to score. Formerly dartzn; the repo, Docker names and `dartboard.*` localStorage keys keep the old names on purpose (renaming would drop saved data). Remote: `https://github.com/domhirs/dartzn.git`, branch `main`. Open work is tracked in [TASKS.md](TASKS.md).
+Self-hosted dart scorer, used on a tablet at the board. Tap the SVG dartboard to score. Remote: `https://github.com/domhirs/ochemate.git`, branch `main`. Open work is tracked in [TASKS.md](TASKS.md).
 
 ## Stack
 
@@ -53,7 +53,7 @@ The in-app name, wordmark and tagline live in `client/src/app/brand.ts`. Everyth
 - Logo and icons: `client/public/brand/mark.png`, `client/public/icons/*`, `client/public/favicon.ico`, `client/public/favicon.svg`
 - README title, banners in `docs/brand/` (regenerate; the lettering is outlined paths) and the heading line of this file
 - Wordmark font if the lettering changes (`client/public/fonts/`, credit in README)
-- Not renamed on purpose: repo and Docker names, `dartboard.*` localStorage keys (changing them drops saved data)
+- Do not rename the internal identifiers: `dartboard.*` localStorage keys, the `dartboard` Docker service, image and `dartboard-data` volume, `dartboard.db`. They are a generic namespace, not the product name, and changing them orphans stored data (browser state, the match history in the Docker volume).
 
 ## Git
 

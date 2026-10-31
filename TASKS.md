@@ -16,14 +16,14 @@ Status: `[ ]` open, `[~]` in progress, `[x]` done.
 | 10  | [x]    | Optional deciding-set tie-break (two clear legs, sudden death at 5-5) like the PDC World Championship        |
 | 11  | [x]    | "ONE HUNDRED AND EIGHTY!" celebration animation when a player hits a 180                                    |
 | 12  | [x]    | Sound on/off toggle and voice packs: play the 180 call with the 180 animation (no pack bundled, see #12)                       |
-| 13  | [x]    | Use the project name dartzn in the app instead of plain Darts                                                  |
+| 13  | [x]    | Use the project name in the app instead of plain Darts                                                  |
 | 14  | [x]    | Make the double and triple rings bigger so they are easier to tap                                              |
 | 15  | [x]    | Make the bullseye (single and double bull) bigger                                                              |
 | 16  | [x]    | Permanent players: saved player profiles, pick them in setup, link matches to them                              |
 | 17  | [x]    | Player stats: matches, wins, notable visits (180 / 140+ / 100+), averages, sortable Players overview             |
 | 18  | [x]    | Theming: dark (existing) and light theme, switch in the header, remembered per device                         |
 | 19  | [x]    | Cancel a running game early (discard, nothing saved)                                                           |
-| 20  | [x]    | Landing page: click the dartzn logo/wordmark to open it; also the start page when no game is running           |
+| 20  | [x]    | Landing page: click the logo/wordmark to open it; also the start page when no game is running           |
 | 21  | [x]    | Ocean theme: dark ocean blue with purple accents                                                               |
 | 22  | [x]    | "Go to home screen" button on the end card of a finished game                                                  |
 | 23  | [ ]    | Live scorecard for other devices: host shows a QR code, phones join with a unique name and follow the running game live (read-only) |
@@ -123,9 +123,9 @@ Acceptance:
 - Web Audio so it works after the first tap on tablets; clips are preloaded; voice files are cached by the service worker.
 - Known issue: `gameon.wav` is Microsoft ADPCM and does not play in browsers; re-export as PCM WAV or mp3 before using it.
 
-### 13. dartzn branding
+### 13. Project name branding
 
-- Browser tab title, PWA name and short name, header logo and doc titles say `dartzn`.
+- Browser tab title, PWA name and short name, header logo and doc titles show the project name.
 - Not renamed on purpose: Docker service/image/volume (`dartboard`, `dartboard-data`) and `/data/dartboard.db`. Renaming would orphan the existing match database.
 - Not changed: app icons (PNG files).
 
