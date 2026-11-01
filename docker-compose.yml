@@ -1,7 +1,9 @@
 services:
   dartboard:
-    build: .
-    image: dartboard:latest
+    # Prebuilt by .github/workflows/image.yml. For a local build see docker-compose.build.yml.
+    # Pin a release (OCHEMATE_TAG=0.1.0 in .env) for reproducible deploys and rollback.
+    image: ghcr.io/domhirs/ochemate:${OCHEMATE_TAG:-latest}
+    pull_policy: always
     restart: unless-stopped
     ports:
       - "8080:8080"

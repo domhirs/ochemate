@@ -1,0 +1,6 @@
+# Local build override: docker compose -f docker-compose.yml -f docker-compose.build.yml up -d --build
+services:
+  dartboard:
+    build: .
+    image: dartboard:local
+    pull_policy: never

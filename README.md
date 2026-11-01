@@ -35,7 +35,13 @@ Four themes: Dark, Light, Ocean and Interstellar.
 ## Run with Docker
 
 ```sh
-docker compose up -d --build
+docker compose up -d
+```
+
+This pulls the prebuilt image `ghcr.io/domhirs/ochemate:latest` (built by GitHub Actions on every push to `main`). To build locally instead:
+
+```sh
+docker compose -f docker-compose.yml -f docker-compose.build.yml up -d --build
 ```
 
 Open `http://<server-ip>:8080` on the tablet. Data lives in the `dartboard-data` volume.

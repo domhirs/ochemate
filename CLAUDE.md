@@ -18,7 +18,8 @@ Angular 20 on purpose: the installed Node (v24.11) is too old for the Angular 21
 cd client && npm install && npx ng build            # output: client/dist/client/browser
 cd server && npm install && npm start               # API + static files on :8080
 cd client && npx ng serve --proxy-config proxy.conf.json   # dev, proxies /api to :8080
-docker compose up -d --build
+docker compose up -d                                  # pulls ghcr.io/domhirs/ochemate:latest
+docker compose -f docker-compose.yml -f docker-compose.build.yml up -d --build   # local build
 ```
 
 Local test run of the built app: `STATIC_DIR=../client/dist/client/browser PORT=8099 DB_PATH=<tmp>/x.db node server.js` from `server/`.
