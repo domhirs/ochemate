@@ -31,6 +31,7 @@ Status: `[ ]` open, `[~]` in progress, `[x]` done.
 | 25  | [ ]    | Multi-device hardening: Traefik/SSE behaviour, rate limits, idle expiry, docs for public and self-hosted use    |
 | 26  | [x]    | AGPL source link in the app (section 13): "Source code" and "License" links plus a non-affiliation notice, one place to configure the URLs |
 | 27  | [x]    | Burger menu (History, Players, Settings) and a Settings view: theme, sound and volume, custom voices with uploads |
+| 28  | [x]    | Show the total of each player's latest visit next to its darts (x01 scored points or BUST, cricket points) |
 
 ## Details
 
