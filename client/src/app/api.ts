@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { Dart, MatchConfig } from './game-logic';
+import { uuid } from './uuid';
 
 export interface MatchRecord {
   id: string;
@@ -69,7 +70,7 @@ export class Api {
   }
 
   createPlayer(name: string): Promise<Profile> {
-    return firstValueFrom(this.http.post<Profile>('/api/players', { id: crypto.randomUUID(), name }));
+    return firstValueFrom(this.http.post<Profile>('/api/players', { id: uuid(), name }));
   }
 
   renamePlayer(id: string, name: string): Promise<Profile> {
@@ -85,7 +86,7 @@ export class Api {
   }
 
   createVoice(name: string): Promise<Voice> {
-    return firstValueFrom(this.http.post<Voice>('/api/voices', { id: crypto.randomUUID(), name }));
+    return firstValueFrom(this.http.post<Voice>('/api/voices', { id: uuid(), name }));
   }
 
   renameVoice(id: string, name: string): Promise<Voice> {

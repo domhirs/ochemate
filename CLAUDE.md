@@ -39,6 +39,7 @@ Local test run of the built app: `STATIC_DIR=../client/dist/client/browser PORT=
 
 - UI text is English. Code comments only where the why is not obvious.
 - Colors come from CSS tokens in `client/src/styles.css` (dark default, `:root[data-theme=...]` overrides). No hex colors in components except the dartboard and the 180 celebration.
+- The app runs over plain HTTP on the LAN, so it is not a secure context: `crypto.randomUUID()` is undefined there. Use `uuid()` from `uuid.ts`; same caution for other secure-context-only APIs.
 - Responsive CSS in `game.ts`: the `@media` overrides must stay at the **end** of the styles block. They have the same specificity as the base rules, so earlier placement silently loses.
 - The board is sized with a container query (`.board` + `min(100cqw, 100cqh)`); do not give it fixed heights.
 - Production builds register a service worker. When checking a rebuild in a browser, unregister the worker and clear caches first, or you see the old build.

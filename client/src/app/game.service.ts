@@ -1,6 +1,7 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { Api } from './api';
 import { Sound } from './sound';
+import { uuid } from './uuid';
 import { Dart, MatchConfig, buildHistory, defaultConfig, replay } from './game-logic';
 
 export interface Celebration {
@@ -87,7 +88,7 @@ export class GameService {
   start(config: MatchConfig): void {
     this.lastConfig.set(config);
     store(CONFIG_KEY, config);
-    this.id = crypto.randomUUID();
+    this.id = uuid();
     this.saved = false;
     this.saveOk.set(null);
     this.config.set(config);
@@ -122,7 +123,7 @@ export class GameService {
     if (this.saved) {
       // Undoing a finished match: drop the stored result so the corrected one saves under a fresh id.
       void this.api.remove(this.id).catch(() => undefined);
-      this.id = crypto.randomUUID();
+      this.id = uuid();
     }
     this.saved = false;
     this.saveOk.set(null);
