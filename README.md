@@ -38,7 +38,7 @@ Four themes: Dark, Light, Ocean and Interstellar.
 docker compose up -d
 ```
 
-This pulls the prebuilt image `ghcr.io/domhirs/ochemate:latest` (built by GitHub Actions on every push to `main`). To build locally instead:
+This pulls the prebuilt image `ghcr.io/domhirs/ochemate:latest` (built by GitHub Actions for every release tag; `edge` follows `develop`). To build locally instead:
 
 ```sh
 docker compose -f docker-compose.yml -f docker-compose.build.yml up -d --build
