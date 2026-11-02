@@ -4,10 +4,11 @@ All notable changes to Ochemate. Format follows [Keep a Changelog](https://keepa
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-11-02
+
 ### Added
 
 - Settings > About shows the build of the running image (branch or tag and commit), so a test instance on `edge` is recognisable.
-
 - `OCHEMATE_PORT` in `.env` sets the published host port (default 8080), so a second instance fits on the same Docker host.
 - Fullscreen button in the top right corner of the board (hides the browser bars; works over plain HTTP).
 
@@ -37,7 +38,8 @@ All notable changes to Ochemate. Format follows [Keep a Changelog](https://keepa
 - Match history with stats, saved players, themes and custom voices.
 - Prebuilt image on GHCR with semver tags.
 
-[Unreleased]: https://github.com/domhirs/ochemate/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/domhirs/ochemate/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/domhirs/ochemate/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/domhirs/ochemate/compare/v0.1.1...v0.2.0
 [0.1.1]: https://github.com/domhirs/ochemate/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/domhirs/ochemate/releases/tag/v0.1.0
