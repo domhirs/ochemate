@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, OnInit, computed, inject, signal } from '@angular/core';
-import { Voice } from './api';
+import { Api, Voice } from './api';
 import { BRAND } from './brand';
 import { Legal } from './legal';
 import { DEFAULT_VOICE, Sound } from './sound';
@@ -126,7 +126,11 @@ interface Status {
     <section class="panel">
       <h2>About</h2>
       <p class="hint">
-        {{ brand.name }} v{{ brand.version }} ·
+        {{ brand.name }} v{{ brand.version }}
+        @if (build(); as b) {
+          · build {{ b }}
+        }
+        ·
         <a [href]="brand.source.changelog" target="_blank" rel="noopener noreferrer">Changelog</a>
       </p>
       <p class="hint">{{ brand.name }} is free software under the AGPL-3.0. {{ brand.tagline }}</p>
@@ -173,6 +177,7 @@ export class Settings implements OnInit {
   protected readonly theme = inject(Theme);
   protected readonly sound = inject(Sound);
   protected readonly voices = inject(Voices);
+  private readonly api = inject(Api);
 
   protected readonly themes = THEMES;
   protected readonly events = VOICE_EVENTS;
@@ -186,12 +191,14 @@ export class Settings implements OnInit {
   protected readonly draft = signal('');
   protected readonly busy = signal(false);
   protected readonly status = signal<Status | null>(null);
+  protected readonly build = signal<string | null>(null);
 
   private target: { id: string; event: string } | null = null;
   private audio: HTMLAudioElement | null = null;
 
   ngOnInit(): void {
     void this.voices.refresh();
+    this.api.build().then((b) => this.build.set(b), () => undefined);
   }
 
   protected setVolume(value: string): void {

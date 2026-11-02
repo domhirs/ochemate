@@ -63,9 +63,10 @@ The in-app name, wordmark and tagline live in `client/src/app/brand.ts`. Everyth
 
 - Conventional Commits (`feat:`, `fix:`, `chore:`, `docs:`).
 - Commit or push only when asked.
+- Branches: `main` holds released versions only. `develop` is the target of every feature and fix PR. Work on `feat/...` or `fix/...` branches off `develop`.
 
 ## Releases and changelog
 
 - [CHANGELOG.md](CHANGELOG.md) (Keep a Changelog). Add each user-visible change under `[Unreleased]` in the PR that makes it.
 - The version lives in `client/package.json` (and the lockfile); `BRAND.version` reads it and Settings > About shows it.
-- Release: move `[Unreleased]` to a new `[x.y.z] - date` section, bump `client/package.json` + lockfile, merge to `main`, then `git tag vx.y.z && git push origin vx.y.z`. CI fails the tag build if the tag differs from `package.json`. Only a `v*` tag moves the image tag `latest`.
+- Release: once the changes on `develop` are tested, move `[Unreleased]` to a new `[x.y.z] - date` section and bump `client/package.json` + lockfile on `develop`. Open a PR `develop` -> `main` and merge it with a merge commit (no squash, so the branches stay in sync), then on `main` run `git tag vx.y.z && git push origin vx.y.z`. CI fails the tag build if the tag differs from `package.json`. Only a `v*` tag moves the image tag `latest`.

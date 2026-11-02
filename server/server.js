@@ -66,7 +66,9 @@ const app = express();
 app.disable('x-powered-by');
 app.use(express.json({ limit: '256kb' }));
 
-app.get('/api/health', (_req, res) => res.json({ ok: true }));
+// Set by the image build (see Dockerfile), for example "develop abc1234". Null for local runs.
+const build = process.env.BUILD_INFO || null;
+app.get('/api/health', (_req, res) => res.json({ ok: true, build }));
 
 app.get('/api/matches', (_req, res) => {
   const rows = listMatches.all().map((r) => ({ ...JSON.parse(r.payload), id: r.id, finishedAt: r.finished_at }));

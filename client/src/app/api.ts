@@ -61,6 +61,12 @@ function writePending(list: MatchRecord[]): void {
 export class Api {
   private readonly http = inject(HttpClient);
 
+  /** Build label of the running image (for example "develop abc1234"), null for local runs. */
+  async build(): Promise<string | null> {
+    const h = await firstValueFrom(this.http.get<{ build?: string | null }>('/api/health'));
+    return h.build ?? null;
+  }
+
   matches(): Promise<MatchRecord[]> {
     return firstValueFrom(this.http.get<MatchRecord[]>('/api/matches'));
   }
