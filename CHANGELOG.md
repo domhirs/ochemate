@@ -4,6 +4,10 @@ All notable changes to Ochemate. Format follows [Keep a Changelog](https://keepa
 
 ## [Unreleased]
 
+### Changed
+
+- Game selection shows "X01" instead of "301 / 501", since 701 is offered too.
+
 ## [0.2.0] - 2026-11-02
 
 ### Added

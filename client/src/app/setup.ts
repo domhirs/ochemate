@@ -131,7 +131,7 @@ export class Setup {
   protected readonly describe = describeProfileError;
 
   protected readonly modes: { id: Mode; label: string }[] = [
-    { id: 'x01', label: '301 / 501' },
+    { id: 'x01', label: 'X01' },
     { id: 'cricket', label: 'Cricket' },
     { id: 'atc', label: 'Around the Clock' },
   ];
