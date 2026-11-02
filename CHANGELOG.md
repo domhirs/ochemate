@@ -6,6 +6,7 @@ All notable changes to Ochemate. Format follows [Keep a Changelog](https://keepa
 
 ### Changed
 
+- Rematch rotates the player order: two players swap, with more players the next one in line starts.
 - Game selection shows "X01" instead of "301 / 501", since 701 is offered too.
 
 ## [0.2.0] - 2026-11-02

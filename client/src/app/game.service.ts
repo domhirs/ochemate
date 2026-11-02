@@ -100,7 +100,9 @@ export class GameService {
   rematch(): void {
     const c = this.config();
     if (!c) return;
-    this.start(c);
+    // Rotating the order by one swaps two players and lets the next one in line start with more.
+    const rotate = <T>(list: T[]): T[] => [...list.slice(1), list[0]];
+    this.start({ ...c, players: rotate(c.players), playerIds: c.playerIds && rotate(c.playerIds) });
   }
 
   throwDart(d: Dart): void {
