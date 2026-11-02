@@ -35,6 +35,7 @@ const MARKS = ['', '/', '✕', '⊗'];
                     @for (l of throws()[i].labels; track $index) {
                       <span class="chip" [class.empty]="l === null">{{ l ?? '–' }}</span>
                     }
+                    <span class="total" [class.empty]="throws()[i].total === null">{{ visitTotal(throws()[i]) }}</span>
                   </div>
                   @if (i === s.current && s.winner === null && checkouts().length) {
                     <div class="routes">
@@ -64,6 +65,7 @@ const MARKS = ['', '/', '✕', '⊗'];
                         @for (l of throws()[i].labels; track $index) {
                           <span class="chip" [class.empty]="l === null">{{ l ?? '–' }}</span>
                         }
+                        <span class="total" [class.empty]="throws()[i].total === null">{{ visitTotal(throws()[i]) }}</span>
                       </td>
                     }
                   </tr>
@@ -215,6 +217,10 @@ const MARKS = ['', '/', '✕', '⊗'];
     div.throws { display: flex; gap: .3rem; flex-wrap: wrap; margin-top: .25rem; }
     .chip { background: var(--fill-strong); padding: .1rem .55rem; border-radius: 999px; font-weight: 700; font-size: .85rem; min-width: 2.4rem; text-align: center; }
     .chip.empty { opacity: .35; }
+    .total { margin-left: auto; font-weight: 800; font-size: 1rem; color: var(--text-strong); font-variant-numeric: tabular-nums; min-width: 2.4rem; text-align: right; }
+    .total.empty { opacity: .35; }
+    .bust .total { color: var(--danger); }
+    .cricket .total { display: inline-block; margin-left: .2rem; font-size: .8rem; min-width: 0; color: var(--accent); }
     .bust .chip:not(.empty) { color: var(--danger); }
     .cricket .throws td { padding: .2rem; border-bottom: 1px solid var(--line); }
     .cricket .chip { display: inline-block; margin: .1rem; font-size: .75rem; min-width: 0; padding: .05rem .4rem; }
@@ -306,9 +312,13 @@ export class Game {
       const entries = mine.filter((e) => e.turn === last);
       const labels: (string | null)[] = entries.map((e) => dartLabel(e.dart));
       while (labels.length < 3) labels.push(null);
-      return { labels, bust: entries.some((e) => e.bust) };
+      const total = entries.length ? entries.reduce((sum, e) => sum + e.scored, 0) : null;
+      return { labels, bust: entries.some((e) => e.bust), total };
     });
   });
+
+  protected readonly visitTotal = (t: { total: number | null; bust: boolean }): string =>
+    t.bust ? 'BUST' : t.total === null ? '–' : String(t.total);
 
   protected readonly avg = threeDartAvg;
   protected readonly label = (d: Dart): string => dartLabel(d);

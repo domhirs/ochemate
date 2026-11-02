@@ -247,6 +247,8 @@ export interface HistoryEntry {
   dart: Dart;
   /** Player score right after the dart (x01 remaining, cricket points, atc target index). */
   after: number;
+  /** Points this dart added to the visit (x01 scored, cricket points). A bust dart takes back the earlier darts, so a visit always sums to its real total. */
+  scored: number;
   bust: boolean;
   /** This dart won the match. */
   win: boolean;
@@ -262,12 +264,19 @@ export function buildHistory(config: MatchConfig, darts: Dart[]): HistoryEntry[]
     if (s.turn.length === 0) turn++;
     const player = s.current;
     const prev = s.lastTurn;
+    const before = s.players[player].score;
+    const leg = s.leg;
     applyDart(s, dart);
+    const after = s.players[player].score;
+    // A checkout resets every score to the start value, so the dart took the player to 0.
+    const legWon = s.config.mode === 'x01' && (s.leg !== leg || s.winner !== null);
+    const scored = s.config.mode === 'x01' ? before - (legWon ? 0 : after) : after - before;
     out.push({
       turn,
       player,
       dart,
-      after: s.players[player].score,
+      after,
+      scored,
       bust: s.lastTurn !== prev && s.lastTurn!.bust,
       win: s.winner !== null,
     });
