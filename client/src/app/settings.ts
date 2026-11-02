@@ -125,6 +125,10 @@ interface Status {
 
     <section class="panel">
       <h2>About</h2>
+      <p class="hint">
+        {{ brand.name }} v{{ brand.version }} ·
+        <a [href]="brand.source.changelog" target="_blank" rel="noopener noreferrer">Changelog</a>
+      </p>
       <p class="hint">{{ brand.name }} is free software under the AGPL-3.0. {{ brand.tagline }}</p>
       <app-legal />
     </section>
@@ -134,6 +138,7 @@ interface Status {
     .panel { background: var(--surface); border-radius: 14px; padding: 1rem 1.25rem; }
     h2 { margin: 0 0 .75rem; font-size: 1.15rem; }
     .hint { color: var(--muted); margin: 0 0 .75rem; font-size: .9rem; }
+    .hint a { color: var(--accent); text-decoration: underline; }
     .muted { color: var(--muted); }
     .note { margin: .75rem 0 0; font-size: .9rem; }
     .warn { color: var(--warn); margin: .75rem 0 0; }
