@@ -6,7 +6,7 @@ All notable changes to Ochemate. Format follows [Keep a Changelog](https://keepa
 
 ### Added
 
-- Fullscreen entry in the menu (hides the browser bars; works over plain HTTP).
+- Fullscreen button in the top right corner of the board (hides the browser bars; works over plain HTTP).
 
 ### Changed
 

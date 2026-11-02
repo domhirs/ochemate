@@ -19,10 +19,7 @@ interface MenuItem {
   selector: 'app-root',
   imports: [Game, History, Home, Players, Settings, Setup],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: {
-    '(document:keydown.escape)': 'menuOpen.set(false)',
-    '(document:fullscreenchange)': 'syncFullscreen()',
-  },
+  host: { '(document:keydown.escape)': 'menuOpen.set(false)' },
   template: `
     <header>
       <button type="button" class="logo" [attr.aria-label]="brand.name + ' home'" (click)="game.view.set('home')"><img class="mark" src="brand/mark.png" alt="" /><span class="word">{{ brand.wordmark.lead }}<b>{{ brand.wordmark.accent }}</b></span></button>
@@ -39,11 +36,6 @@ interface MenuItem {
               @for (item of items; track item.view) {
                 <li role="none">
                   <button type="button" role="menuitem" [class.on]="game.view() === item.view" (click)="open(item.view)"><span aria-hidden="true">{{ item.icon }}</span> {{ item.label }}</button>
-                </li>
-              }
-              @if (canFullscreen) {
-                <li role="none">
-                  <button type="button" role="menuitem" (click)="toggleFullscreen()"><span aria-hidden="true">⛶</span> {{ fullscreen() ? 'Exit fullscreen' : 'Fullscreen' }}</button>
                 </li>
               }
             </ul>
@@ -111,23 +103,10 @@ export class App {
     { view: 'settings', icon: '⚙️', label: 'Settings' },
   ];
   protected readonly menuOpen = signal(false);
-  // Needs no secure context, so it also works over plain HTTP. Not available on iPhone.
-  protected readonly canFullscreen = document.fullscreenEnabled;
-  protected readonly fullscreen = signal(!!document.fullscreenElement);
   protected readonly inMenuView = computed(() => this.items.some((i) => i.view === this.game.view()));
 
   protected open(view: View): void {
     this.game.view.set(view);
     this.menuOpen.set(false);
-  }
-
-  protected syncFullscreen(): void {
-    this.fullscreen.set(!!document.fullscreenElement);
-  }
-
-  protected toggleFullscreen(): void {
-    this.menuOpen.set(false);
-    const done = document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
-    done.catch(() => undefined);
   }
 }
