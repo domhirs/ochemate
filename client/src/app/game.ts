@@ -3,6 +3,7 @@ import { Dartboard } from './dartboard';
 import { DartInput } from './dart-input';
 import { MatchOverview } from './match-overview';
 import { OneEighty } from './one-eighty';
+import { Fullscreen } from './fullscreen';
 import { GameService } from './game.service';
 import { ATC_SEQUENCE, CRICKET_NUMBERS, Dart, checkoutRoutes, dartLabel, setsToWin, threeDartAvg } from './game-logic';
 
@@ -114,6 +115,13 @@ const MARKS = ['', '/', '✕', '⊗'];
 
         <div class="input">
           <div class="board"><app-dartboard (thrown)="game.throwDart($event)" /></div>
+          @if (fullscreen.supported) {
+            <button type="button" class="fs" [attr.aria-label]="fullscreen.active() ? 'Exit fullscreen' : 'Fullscreen'" (click)="fullscreen.toggle()">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path [attr.d]="fullscreen.active() ? 'M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5' : 'M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5'" />
+              </svg>
+            </button>
+          }
         </div>
       </div>
 
@@ -220,7 +228,8 @@ const MARKS = ['', '/', '✕', '⊗'];
     .cricket tbody th { color: var(--muted); font-size: 1rem; }
     .cricket .active { background: var(--fill); }
     .cricket .closed { color: var(--accent); }
-    .input { display: flex; flex-direction: column; gap: .5rem; min-height: 0; min-width: 0; }
+    .input { position: relative; display: flex; flex-direction: column; gap: .5rem; min-height: 0; min-width: 0; }
+    .fs { position: absolute; top: 0; right: 0; z-index: 1; width: 44px; height: 44px; padding: 0; display: grid; place-items: center; }
     .board { flex: 1; min-height: 0; container-type: size; display: grid; overflow: hidden auto; scrollbar-width: none; }
     /* Floor keeps small segments tappable; capped by width so it never scrolls sideways. margin:auto centres without clipping on overflow. */
     app-dartboard { --size: max(min(100cqw, 100cqh), min(var(--board-min), 100cqw)); width: var(--size); height: var(--size); margin: auto; }
@@ -285,6 +294,7 @@ const MARKS = ['', '/', '✕', '⊗'];
 })
 export class Game {
   protected readonly game = inject(GameService);
+  protected readonly fullscreen = inject(Fullscreen);
   protected readonly state = this.game.state;
   protected readonly sets = computed(() => {
     const s = this.state();

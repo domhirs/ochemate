@@ -4,6 +4,10 @@ All notable changes to Ochemate. Format follows [Keep a Changelog](https://keepa
 
 ## [Unreleased]
 
+### Added
+
+- Fullscreen button in the top right corner of the board (hides the browser bars; works over plain HTTP).
+
 ### Changed
 
 - Rematch rotates the player order: two players swap, with more players the next one in line starts.
