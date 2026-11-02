@@ -23,6 +23,8 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY server/package.json server/server.js server/voices.js ./
 COPY --from=client /client/dist/client/browser ./public
 RUN mkdir /data && chown node:node /data
+ARG BUILD_INFO=
+ENV BUILD_INFO=$BUILD_INFO
 USER node
 VOLUME /data
 EXPOSE 8080
