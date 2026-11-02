@@ -63,3 +63,9 @@ The in-app name, wordmark and tagline live in `client/src/app/brand.ts`. Everyth
 
 - Conventional Commits (`feat:`, `fix:`, `chore:`, `docs:`).
 - Commit or push only when asked.
+
+## Releases and changelog
+
+- [CHANGELOG.md](CHANGELOG.md) (Keep a Changelog). Add each user-visible change under `[Unreleased]` in the PR that makes it.
+- The version lives in `client/package.json` (and the lockfile); `BRAND.version` reads it and Settings > About shows it.
+- Release: move `[Unreleased]` to a new `[x.y.z] - date` section, bump `client/package.json` + lockfile, merge to `main`, then `git tag vx.y.z && git push origin vx.y.z`. CI fails the tag build if the tag differs from `package.json`. Only a `v*` tag moves the image tag `latest`.
