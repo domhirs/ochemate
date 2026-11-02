@@ -29,7 +29,8 @@ db.exec(`
 
 const insertMatch = db.prepare('INSERT OR IGNORE INTO matches (id, finished_at, payload) VALUES (?, ?, ?)');
 const listMatches = db.prepare('SELECT id, finished_at, payload FROM matches ORDER BY finished_at DESC LIMIT 500');
-const deleteMatch = db.prepare('DELETE FROM matches WHERE id = ?');
+const updateMatch = db.prepare('UPDATE matches SET payload = ? WHERE id = ?');
+const deleteMatch =db.prepare('DELETE FROM matches WHERE id = ?');
 
 const listPlayers = db.prepare('SELECT id, name, created_at FROM players ORDER BY name');
 const insertPlayer = db.prepare('INSERT INTO players (id, name, created_at) VALUES (?, ?, ?)');
@@ -80,6 +81,15 @@ app.post('/api/matches', (req, res) => {
   const { config, darts } = req.body;
   insertMatch.run(id, finishedAt, JSON.stringify({ config, darts }));
   res.status(201).json({ id, finishedAt });
+});
+
+// Corrects the throws of a saved match. finished_at stays, so the history order does not change.
+app.put('/api/matches/:id', (req, res) => {
+  if (!validMatch(req.body)) return res.status(400).json({ error: 'invalid match' });
+  const { config, darts } = req.body;
+  const result = updateMatch.run(JSON.stringify({ config, darts }), req.params.id);
+  if (!result.changes) return res.status(404).json({ error: 'not found' });
+  res.status(204).end();
 });
 
 app.delete('/api/matches/:id', (req, res) => {
