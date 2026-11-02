@@ -6,6 +6,7 @@ All notable changes to Ochemate. Format follows [Keep a Changelog](https://keepa
 
 ### Added
 
+- `OCHEMATE_PORT` in `.env` sets the published host port (default 8080), so a second instance fits on the same Docker host.
 - Fullscreen button in the top right corner of the board (hides the browser bars; works over plain HTTP).
 
 ### Changed
