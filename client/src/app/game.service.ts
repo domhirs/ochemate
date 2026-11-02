@@ -130,6 +130,25 @@ export class GameService {
     this.persist();
   }
 
+  /** Replaces one thrown dart and replays everything after it. Darts past a (new) winning dart are dropped. */
+  editDart(index: number, d: Dart): void {
+    const c = this.config();
+    if (!c || index < 0 || index >= this.darts().length) return;
+    const edited = this.darts().map((x, i) => (i === index ? { n: d.n, m: d.m } : x));
+    this.celebrations.set([]);
+    this.sound.stop();
+    this.darts.set(edited.slice(0, buildHistory(c, edited).length));
+    if (this.saved) {
+      // Same as undo: the stored result is stale, the corrected one saves under a fresh id.
+      void this.api.remove(this.id).catch(() => undefined);
+      this.id = uuid();
+      this.saved = false;
+    }
+    this.saveOk.set(null);
+    this.persist();
+    if (this.state()!.winner !== null) void this.finish();
+  }
+
   /** Abandons the running game without saving it. */
   cancel(): void {
     this.discard('setup');

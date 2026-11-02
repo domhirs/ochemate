@@ -109,6 +109,10 @@ export class Api {
     return firstValueFrom(this.http.delete(`/api/voices/${encodeURIComponent(id)}/clips/${encodeURIComponent(event)}`));
   }
 
+  updateMatch(id: string, match: Pick<MatchRecord, 'config' | 'darts'>): Promise<unknown> {
+    return firstValueFrom(this.http.put(`/api/matches/${encodeURIComponent(id)}`, match));
+  }
+
   remove(id: string): Promise<unknown> {
     writePending(readPending().filter((p) => p.id !== id));
     return firstValueFrom(this.http.delete(`/api/matches/${encodeURIComponent(id)}`));

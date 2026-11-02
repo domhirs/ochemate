@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { Dartboard } from './dartboard';
+import { DartInput } from './dart-input';
 import { MatchOverview } from './match-overview';
 import { OneEighty } from './one-eighty';
 import { GameService } from './game.service';
@@ -9,7 +10,7 @@ const MARKS = ['', '/', '✕', '⊗'];
 
 @Component({
   selector: 'app-game',
-  imports: [Dartboard, MatchOverview, OneEighty],
+  imports: [Dartboard, DartInput, MatchOverview, OneEighty],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     @if (state(); as s) {
@@ -141,12 +142,21 @@ const MARKS = ['', '/', '✕', '⊗'];
             @if (game.history().length === 0) {
               <p class="muted">No darts thrown yet.</p>
             }
+            @if (editing() !== null) {
+              <div class="confirm picker">
+                <p>New value for dart #{{ editing()! + 1 }} ({{ label(game.history()[editing()!].dart) }})</p>
+                <app-dart-input [initial]="game.history()[editing()!].dart" (picked)="applyEdit($event)" />
+                <button type="button" class="ghost cancel" (click)="editing.set(null)">Cancel</button>
+              </div>
+            } @else if (game.history().length) {
+              <p class="muted hint">Tap a throw to correct it.</p>
+            }
             <ol>
               @for (e of reversed(); track e.index) {
-                <li [class.bust]="e.bust">
+                <li [class.bust]="e.bust" [class.sel]="editing() === e.index">
                   <span class="t">#{{ e.turn }}</span>
                   <span class="p">{{ s.players[e.player].name }}</span>
-                  <span class="d">{{ label(e.dart) }}</span>
+                  <button type="button" class="d" (click)="editing.set(e.index)" [attr.aria-label]="'Edit ' + label(e.dart)">{{ label(e.dart) }} ✎</button>
                   <span class="r">
                     @if (e.bust) { BUST }
                     @else if (e.win) { 🎯 Win }
@@ -237,7 +247,10 @@ const MARKS = ['', '/', '✕', '⊗'];
     .history ol { list-style: none; margin: .5rem 0 0; padding: 0; }
     .history li { display: grid; grid-template-columns: 2.5rem 1fr auto 6rem; gap: .5rem; padding: .4rem 0; border-bottom: 1px solid var(--line); align-items: baseline; }
     .history .t { color: var(--muted); font-size: .8rem; }
-    .history .d { font-weight: 700; }
+    .history .d { font-weight: 700; background: var(--fill); padding: .3rem .7rem; min-height: 40px; }
+    .history .sel .d { outline: 2px solid var(--accent); }
+    .history .hint { margin: .5rem 0 0; font-size: .85rem; }
+    .history .picker { display: flex; flex-direction: column; gap: .5rem; }
     .history .r { color: var(--muted); text-align: right; font-size: .9rem; }
     .history .bust .r { color: var(--danger); font-weight: 700; }
     .muted { color: var(--muted); }
@@ -283,7 +296,17 @@ export class Game {
   protected readonly cricketNumbers = CRICKET_NUMBERS;
   protected readonly atcLength = ATC_SEQUENCE.length;
 
+  protected readonly editing = signal<number | null>(null);
+
+  protected applyEdit(d: Dart): void {
+    const i = this.editing();
+    if (i === null) return;
+    this.editing.set(null);
+    this.game.editDart(i, d);
+  }
+
   protected closeHistory(): void {
+    this.editing.set(null);
     this.showHistory.set(false);
     this.confirmCancel.set(false);
   }
