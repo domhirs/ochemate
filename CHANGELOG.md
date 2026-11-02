@@ -4,6 +4,7 @@ All notable changes to Ochemate. Format follows [Keep a Changelog](https://keepa
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-11-02
 
 ### Added
 
@@ -24,6 +25,7 @@ All notable changes to Ochemate. Format follows [Keep a Changelog](https://keepa
 - Match history with stats, saved players, themes and custom voices.
 - Prebuilt image on GHCR with semver tags.
 
-[Unreleased]: https://github.com/domhirs/ochemate/compare/v0.1.1...HEAD
+[Unreleased]: https://github.com/domhirs/ochemate/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/domhirs/ochemate/compare/v0.1.1...v0.2.0
 [0.1.1]: https://github.com/domhirs/ochemate/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/domhirs/ochemate/releases/tag/v0.1.0
