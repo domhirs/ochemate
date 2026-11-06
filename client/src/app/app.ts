@@ -4,6 +4,7 @@ import { Game } from './game';
 import { GameService, View } from './game.service';
 import { History } from './history';
 import { Home } from './home';
+import { PlayerDetail } from './player-detail';
 import { Players } from './players';
 import { Settings } from './settings';
 import { Setup } from './setup';
@@ -17,7 +18,7 @@ interface MenuItem {
 
 @Component({
   selector: 'app-root',
-  imports: [Game, History, Home, Players, Settings, Setup],
+  imports: [Game, History, Home, PlayerDetail, Players, Settings, Setup],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { '(document:keydown.escape)': 'menuOpen.set(false)' },
   template: `
@@ -35,7 +36,7 @@ interface MenuItem {
             <ul class="menu" role="menu" aria-label="Menu">
               @for (item of items; track item.view) {
                 <li role="none">
-                  <button type="button" role="menuitem" [class.on]="game.view() === item.view" (click)="open(item.view)"><span aria-hidden="true">{{ item.icon }}</span> {{ item.label }}</button>
+                  <button type="button" role="menuitem" [class.on]="active() === item.view" (click)="open(item.view)"><span aria-hidden="true">{{ item.icon }}</span> {{ item.label }}</button>
                 </li>
               }
             </ul>
@@ -59,6 +60,9 @@ interface MenuItem {
         }
         @case ('players') {
           <app-players />
+        }
+        @case ('stats') {
+          <app-player-detail />
         }
         @case ('settings') {
           <app-settings />
@@ -103,7 +107,9 @@ export class App {
     { view: 'settings', icon: '⚙️', label: 'Settings' },
   ];
   protected readonly menuOpen = signal(false);
-  protected readonly inMenuView = computed(() => this.items.some((i) => i.view === this.game.view()));
+  /** The advanced stats view belongs to Players. */
+  protected readonly active = computed<View>(() => (this.game.view() === 'stats' ? 'players' : this.game.view()));
+  protected readonly inMenuView = computed(() => this.items.some((i) => i.view === this.active()));
 
   protected open(view: View): void {
     this.game.view.set(view);

@@ -4,6 +4,14 @@ All notable changes to Ochemate. Format follows [Keep a Changelog](https://keepa
 
 ## [Unreleased]
 
+### Added
+
+- Advanced stats page per saved player, opened from "Advanced stats" on the player card: dartboard heatmap of every dart, radar chart of the hit rate per finishing double, 3-dart average by visit in the leg, visit ranges from 0–39 up to 180, hit counts for T15–T20, single bull and bull, and strengths and weaknesses derived from the numbers.
+
+### Changed
+
+- A game with a single player counts as training: it no longer adds to match stats on the player card or in History, and History marks it "Training". Training has its own view on the advanced stats page, and the player card shows the number of training sessions.
+
 ## [0.4.0] - 2026-11-08
 
 ### Added

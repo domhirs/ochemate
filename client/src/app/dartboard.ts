@@ -1,10 +1,10 @@
 import { ChangeDetectionStrategy, Component, output } from '@angular/core';
 import { Dart } from './game-logic';
 
-const ORDER = [20, 1, 18, 4, 13, 6, 10, 15, 2, 17, 3, 19, 7, 16, 8, 11, 14, 9, 12, 5];
+export const ORDER = [20, 1, 18, 4, 13, 6, 10, 15, 2, 17, 3, 19, 7, 16, 8, 11, 14, 9, 12, 5];
 
 // Based on a regulation board (outer edge 170) but with thicker double/triple rings and a bigger bull, so they are easy to hit by touch.
-const R = { bull: 11, outerBull: 25, tripleIn: 86, tripleOut: 110, doubleIn: 146, doubleOut: 170 };
+export const R = { bull: 11, outerBull: 25, tripleIn: 86, tripleOut: 110, doubleIn: 146, doubleOut: 170 };
 
 interface Segment {
   path: string;
@@ -19,12 +19,12 @@ interface NumberLabel {
   y: number;
 }
 
-function pt(r: number, deg: number): string {
+export function pt(r: number, deg: number): string {
   const a = (deg * Math.PI) / 180;
   return `${(r * Math.sin(a)).toFixed(2)} ${(-r * Math.cos(a)).toFixed(2)}`;
 }
 
-function ring(r1: number, r2: number, a1: number, a2: number): string {
+export function ring(r1: number, r2: number, a1: number, a2: number): string {
   return `M${pt(r2, a1)} A${r2} ${r2} 0 0 1 ${pt(r2, a2)} L${pt(r1, a2)} A${r1} ${r1} 0 0 0 ${pt(r1, a1)} Z`;
 }
 

@@ -32,6 +32,7 @@ Status: `[ ]` open, `[~]` in progress, `[x]` done.
 | 26  | [x]    | AGPL source link in the app (section 13): "Source code" and "License" links plus a non-affiliation notice, one place to configure the URLs |
 | 27  | [x]    | Burger menu (History, Players, Settings) and a Settings view: theme, sound and volume, custom voices with uploads |
 | 28  | [x]    | Show the total of each player's latest visit next to its darts (x01 scored points or BUST, cricket points) |
+| 29  | [x]    | Advanced player stats page (heatmap, doubles radar, leg curve, ranges, takeaways); 1-player games count as training |
 
 ## Details
 
@@ -224,3 +225,11 @@ Acceptance:
 - Voices: the built-in Default (`public/sounds/default/`) plus any number of named custom voices. Each custom voice holds one recording per event (today the 180 call) and falls back to the default clip for events it has none for. Add, rename, delete, upload, replace, remove and preview are in the UI. The chosen voice is remembered per device; if it was deleted elsewhere the device falls back to Default.
 - Storage is on the server (`server/voices.js`, blobs in SQLite) so all devices share voices. Because there is no auth the API is bounded: 1 MB per clip, 20 voices, event names from a fixed list, audio type detected from the bytes (MP3, M4A, WAV, OGG), clips served with `nosniff`. `VOICE_UPLOADS=off` makes it read-only for public hosting: set in `.env` (see `.env.example`) or the environment, wired through `docker-compose.yml`; unknown values fail closed to off, and the startup log prints the state. In that mode Settings hides the add, upload, rename and delete controls and existing voices stay usable. The client also checks that the file decodes and is at most 10 seconds before uploading.
 - Clips are cached by the service worker (data group `voice-clips`); the clip URL carries the upload time, so a replaced recording gets a new URL.
+
+### 29. Advanced stats and training
+
+- A game with one player is training (`isTraining` in `player-stats.ts`). Match stats on the player card and in History skip it; the card shows the number of training sessions.
+- "Advanced stats" on the player card opens the `stats` view (`player-detail.ts`) for that player, with a Matches / Training switch.
+- Contents: KPI tiles, takeaways (`takeaways.ts`, rule-based, each rule needs a minimum sample), visit ranges 180 / 140–179 / 100–139 / 80–99 / 60–79 / 40–59 / 0–39 / bust, hit counts T20–T15, single bull, bull, and three SVG charts in `charts/`: dartboard heatmap, radar of hit rate per finishing double, line of the 3-dart average by visit in the leg.
+- The dart log has no aim, so a dart counts as an attempt at a double when the remaining score is finishable with one double (2–40 even, or 50) under double out. The log also does not tell inner from outer single, so the heatmap shades both single areas of a number the same.
+- The leg curve only uses visits started above 170, so setup and checkout darts do not pull it down. A position is drawn while at least 5 visits back it.
