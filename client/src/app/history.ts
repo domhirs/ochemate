@@ -3,12 +3,14 @@ import { DatePipe } from '@angular/common';
 import { Api, MatchRecord } from './api';
 import { Dart, GameState, HistoryEntry, Mode, X01Options, buildHistory, dartLabel, replay, setsToWin, threeDartAvg } from './game-logic';
 import { DartInput } from './dart-input';
+import { isTraining } from './player-stats';
 
 interface Row {
   id: string;
   finishedAt: string;
   mode: Mode;
   title: string;
+  training: boolean;
   state: GameState;
 }
 
@@ -43,26 +45,28 @@ const MODE_TITLE: Record<Mode, string> = { x01: 'X01', cricket: 'Cricket', atc: 
       } @else if (!rows().length) {
         <p class="muted">No finished games yet.</p>
       } @else {
-        <section class="panel">
-          <h2>Players</h2>
-          <table>
-            <thead>
-              <tr><th>Player</th><th>Games</th><th>Wins</th><th>X01 avg</th><th>180s</th><th>Best out</th></tr>
-            </thead>
-            <tbody>
-              @for (p of stats(); track p.name) {
-                <tr>
-                  <td>{{ p.name }}</td>
-                  <td>{{ p.games }}</td>
-                  <td>{{ p.wins }}</td>
-                  <td>{{ p.x01Darts ? ((p.x01Points / p.x01Darts) * 3).toFixed(1) : '–' }}</td>
-                  <td>{{ p.oneEighties }}</td>
-                  <td>{{ p.bestOut || '–' }}</td>
-                </tr>
-              }
-            </tbody>
-          </table>
-        </section>
+        @if (stats().length) {
+          <section class="panel">
+            <h2>Players</h2>
+            <table>
+              <thead>
+                <tr><th>Player</th><th>Games</th><th>Wins</th><th>X01 avg</th><th>180s</th><th>Best out</th></tr>
+              </thead>
+              <tbody>
+                @for (p of stats(); track p.name) {
+                  <tr>
+                    <td>{{ p.name }}</td>
+                    <td>{{ p.games }}</td>
+                    <td>{{ p.wins }}</td>
+                    <td>{{ p.x01Darts ? ((p.x01Points / p.x01Darts) * 3).toFixed(1) : '–' }}</td>
+                    <td>{{ p.oneEighties }}</td>
+                    <td>{{ p.bestOut || '–' }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </section>
+        }
 
         <section class="panel">
           <h2>Games</h2>
@@ -70,6 +74,9 @@ const MODE_TITLE: Record<Mode, string> = { x01: 'X01', cricket: 'Cricket', atc: 
             <div class="game">
               <div class="head">
                 <strong>{{ r.title }}</strong>
+                @if (r.training) {
+                  <span class="tag">Training</span>
+                }
                 <span class="muted">{{ r.finishedAt | date: 'dd.MM.yyyy HH:mm' }}</span>
                 <button type="button" class="ghost del" (click)="startEdit(r.id)" [disabled]="editId() === r.id">Edit</button>
                 <button type="button" class="ghost del" (click)="remove(r.id)" aria-label="Delete game">✕</button>
@@ -164,6 +171,7 @@ const MODE_TITLE: Record<Mode, string> = { x01: 'X01', cricket: 'Cricket', atc: 
     .players small { color: var(--muted); margin-left: .25rem; }
     .win { color: var(--accent); font-weight: 700; }
     .muted { color: var(--muted); }
+    .tag { font-size: .75rem; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); border: 1px solid var(--ghost-border); border-radius: 999px; padding: .05rem .5rem; }
     .warn { color: var(--warn); }
   `,
 })
@@ -182,6 +190,7 @@ export class History implements OnInit {
         finishedAt: r.finishedAt ?? '',
         mode: c.mode,
         title: `${MODE_TITLE[c.mode]} ${detail}`.trim(),
+        training: isTraining(c),
         state: replay(c, r.darts),
       };
     }),
@@ -190,6 +199,7 @@ export class History implements OnInit {
   protected readonly stats = computed<PlayerStat[]>(() => {
     const map = new Map<string, PlayerStat>();
     for (const r of this.rows()) {
+      if (r.training) continue;
       r.state.players.forEach((p, i) => {
         const s = map.get(p.name) ?? {
           name: p.name,

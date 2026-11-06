@@ -25,6 +25,10 @@
   --warn: #f5b942;
   --danger: #f5624d;
   --scrim: #000b;
+  /* Charts: one hue for magnitude (heatmap), --chart for the single series in line and radar charts. */
+  --heat: #ff9248;
+  --heat-zero: #2c333d;
+  --chart: #3ddc84;
   color-scheme: dark;
 }
 
@@ -44,6 +48,9 @@
   --warn: #9a5b00;
   --danger: #c4311f;
   --scrim: #0009;
+  --heat: #c2410c;
+  --heat-zero: #eef1f5;
+  --chart: #0b8a43;
   color-scheme: light;
 }
 
@@ -63,6 +70,9 @@
   --warn: #f5b942;
   --danger: #ff7a6b;
   --scrim: #020812cc;
+  --heat: #ffa24c;
+  --heat-zero: #1c3258;
+  --chart: #a78bfa;
   color-scheme: dark;
 }
 
@@ -83,6 +93,9 @@
   --warn: #ffb454;
   --danger: #ff5a3c;
   --scrim: #02040dcc;
+  --heat: #ff6a3d;
+  --heat-zero: #17234a;
+  --chart: #22c8ff;
   color-scheme: dark;
 }
 :root[data-theme='interstellar'] body {

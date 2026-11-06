@@ -13,7 +13,7 @@ export interface Celebration {
 
 const CELEBRATION_SECONDS = 3;
 
-export type View = 'home' | 'setup' | 'game' | 'history' | 'players' | 'settings';
+export type View = 'home' | 'setup' | 'game' | 'history' | 'players' | 'stats' | 'settings';
 
 const SAVE_KEY = 'dartboard.current';
 const CONFIG_KEY = 'dartboard.config';
@@ -47,6 +47,8 @@ export class GameService {
   private readonly sound = inject(Sound);
 
   readonly view = signal<View>('home');
+  /** Saved player shown by the advanced stats view. */
+  readonly statsProfileId = signal<string | null>(null);
   readonly lastConfig = signal<MatchConfig>(load<MatchConfig>(CONFIG_KEY) ?? defaultConfig());
   /** Server save outcome for the finished match: null = not attempted yet. */
   readonly saveOk = signal<boolean | null>(null);

@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { Api, MatchRecord, Profile } from './api';
-import { PlayerStats, avg3, emptyStats, statsByProfile } from './player-stats';
+import { GameService } from './game.service';
+import { PlayerStats, avg3, emptyStats, statsByProfile, trainingCounts } from './player-stats';
 import { ProfileResult, Profiles, describeProfileError } from './profiles';
 
 type SortKey = 'matches' | 'wins' | 'winRate' | 'v180' | 'avg' | 'name';
@@ -8,6 +9,7 @@ type SortKey = 'matches' | 'wins' | 'winRate' | 'v180' | 'avg' | 'name';
 interface Row {
   profile: Profile;
   stats: PlayerStats;
+  training: number;
   winRate: number | null;
   avg: number | null;
   first9: number | null;
@@ -31,7 +33,7 @@ const SORTS: { id: SortKey; label: string }[] = [
   template: `
     <section class="panel">
       <h2>Players</h2>
-      <p class="hint">Saved players keep their stats across matches. Pick them when you start a game.</p>
+      <p class="hint">Saved players keep their stats across matches. Pick them when you start a game. A game with one player counts as training.</p>
 
       <form class="add" (submit)="$event.preventDefault(); add()">
         <input
@@ -113,6 +115,10 @@ const SORTS: { id: SortKey; label: string }[] = [
             <div><dt>Highest visit</dt><dd>{{ r.stats.highestVisit || '–' }}</dd></div>
           </dl>
         }
+        <div class="foot">
+          <span class="muted">{{ r.training }} training {{ r.training === 1 ? 'session' : 'sessions' }}</span>
+          <button type="button" class="ghost" (click)="openStats(r.profile)" [disabled]="!r.stats.matches && !r.training">Advanced stats</button>
+        </div>
       </section>
     } @empty {
       <section class="panel"><p class="muted">No saved players yet.</p></section>
@@ -147,12 +153,16 @@ const SORTS: { id: SortKey; label: string }[] = [
     dt { color: var(--muted); font-size: .85rem; }
     dd { margin: 0; font-weight: 700; font-variant-numeric: tabular-nums; }
     dd small { color: var(--muted); font-weight: 500; }
+    .foot { display: flex; justify-content: space-between; align-items: center; gap: .5rem; margin-top: .75rem; }
+    .foot .muted { margin: 0; font-size: .9rem; }
+    .foot button { min-height: 44px; padding: .5rem 1rem; }
     @media (max-width: 480px) { :host { padding: .5rem; } .panel { padding: .75rem; } .grid { grid-template-columns: 1fr; } }
   `,
 })
 export class Players {
   protected readonly profiles = inject(Profiles);
   private readonly api = inject(Api);
+  private readonly game = inject(GameService);
 
   protected readonly sorts = SORTS;
   protected readonly sort = signal<SortKey>('matches');
@@ -166,11 +176,13 @@ export class Players {
 
   protected readonly rows = computed<Row[]>(() => {
     const byId = statsByProfile(this.matches());
+    const training = trainingCounts(this.matches());
     return this.profiles.list().map((profile) => {
       const stats = byId.get(profile.id) ?? emptyStats();
       return {
         profile,
         stats,
+        training: training.get(profile.id) ?? 0,
         winRate: stats.matches ? stats.wins / stats.matches : null,
         avg: avg3(stats.points, stats.darts),
         first9: avg3(stats.first9Points, stats.first9Darts),
@@ -203,6 +215,11 @@ export class Players {
       .matches()
       .then((m) => this.matches.set(m))
       .catch(() => this.statsError.set(true));
+  }
+
+  protected openStats(p: Profile): void {
+    this.game.statsProfileId.set(p.id);
+    this.game.view.set('stats');
   }
 
   protected num(v: number | null, digits = 1): string {
