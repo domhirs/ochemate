@@ -4,6 +4,10 @@ All notable changes to Ochemate. Format follows [Keep a Changelog](https://keepa
 
 ## [Unreleased]
 
+### Added
+
+- Data export and import under Settings > Data: download all players and matches as one JSON file, and upload it on another instance (new server, development copy). Import replaces all players and matches; voices and device settings are not included. `DATA_IMPORT=off` disables import.
+
 ## [0.3.0] - 2026-11-02
 
 ### Added

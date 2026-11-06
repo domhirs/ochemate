@@ -115,6 +115,21 @@ export class Api {
     return firstValueFrom(this.http.delete(`/api/voices/${encodeURIComponent(id)}/clips/${encodeURIComponent(event)}`));
   }
 
+  transfer(): Promise<{ importEnabled: boolean }> {
+    return firstValueFrom(this.http.get<{ importEnabled: boolean }>('/api/transfer'));
+  }
+
+  exportData(): Promise<Blob> {
+    return firstValueFrom(this.http.get('/api/transfer/export', { responseType: 'blob' }));
+  }
+
+  /** Replaces all players and matches on the server. Unsaved matches queued on this device belong to the old data. */
+  async importData(file: unknown): Promise<{ players: number; matches: number }> {
+    const result = await firstValueFrom(this.http.post<{ players: number; matches: number }>('/api/transfer/import', file));
+    writePending([]);
+    return result;
+  }
+
   updateMatch(id: string, match: Pick<MatchRecord, 'config' | 'darts'>): Promise<unknown> {
     return firstValueFrom(this.http.put(`/api/matches/${encodeURIComponent(id)}`, match));
   }
