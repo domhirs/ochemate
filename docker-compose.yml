@@ -12,6 +12,8 @@ services:
     environment:
       # "off" makes the voice API read-only (no uploads, renames or deletes). Use it for any public deployment.
       VOICE_UPLOADS: "${VOICE_UPLOADS:-on}"
+      # "off" disables importing a data file (import replaces all players and matches). Export stays available.
+      DATA_IMPORT: "${DATA_IMPORT:-on}"
 
     security_opt:
       - no-new-privileges:true

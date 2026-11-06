@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, OnInit, computed, inject, signal } 
 import { Api, Voice } from './api';
 import { BRAND } from './brand';
 import { Legal } from './legal';
+import { Profiles } from './profiles';
 import { DEFAULT_VOICE, Sound } from './sound';
 import { THEMES, Theme } from './theme';
 import { VOICE_EVENTS, VoiceError, Voices, describeVoiceError } from './voices';
@@ -124,6 +125,26 @@ interface Status {
     </section>
 
     <section class="panel">
+      <h2>Data</h2>
+      <p class="hint">Move players and match history to another instance, for example a new server or a development copy. Voices and device settings are not included.</p>
+      <div class="actions">
+        <button type="button" [disabled]="dataBusy()" (click)="exportData()">⬇ Export data</button>
+        @if (importEnabled()) {
+          <button type="button" [disabled]="dataBusy()" (click)="importPicker.click()">⬆ Import data</button>
+        }
+      </div>
+      <input #importPicker type="file" hidden accept=".json,application/json" (change)="importPicked($event)" />
+      @if (!importEnabled()) {
+        <p class="muted note">Import is turned off on this server.</p>
+      } @else {
+        <p class="muted note">Importing replaces all players and matches on this instance.</p>
+      }
+      @if (dataStatus(); as s) {
+        <p [class.warn]="s.kind === 'warn'" [class.ok]="s.kind === 'ok'" role="status">{{ s.text }}</p>
+      }
+    </section>
+
+    <section class="panel">
       <h2>About</h2>
       <p class="hint">
         {{ brand.name }} v{{ brand.version }}
@@ -167,6 +188,8 @@ interface Status {
     .clips li { display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; min-height: 40px; }
     .clips .ev { flex: 1 1 6rem; font-size: .9rem; }
     .small { padding: .3rem .7rem; min-height: 40px; font-size: .9rem; }
+    .actions { display: flex; flex-wrap: wrap; gap: .5rem; }
+    .actions button { min-height: 44px; }
     .add { display: flex; gap: .5rem; margin-top: .75rem; }
     .add input { flex: 1; min-width: 0; }
     @media (max-width: 480px) { :host { padding: .5rem; } .panel { padding: .75rem; } .row > span, .row > label { flex-basis: 5rem; } }
@@ -192,13 +215,74 @@ export class Settings implements OnInit {
   protected readonly busy = signal(false);
   protected readonly status = signal<Status | null>(null);
   protected readonly build = signal<string | null>(null);
+  protected readonly importEnabled = signal(true);
+  protected readonly dataBusy = signal(false);
+  protected readonly dataStatus = signal<Status | null>(null);
 
+  private readonly profiles = inject(Profiles);
   private target: { id: string; event: string } | null = null;
   private audio: HTMLAudioElement | null = null;
 
   ngOnInit(): void {
     void this.voices.refresh();
     this.api.build().then((b) => this.build.set(b), () => undefined);
+    this.api.transfer().then((t) => this.importEnabled.set(t.importEnabled), () => undefined);
+  }
+
+  protected async exportData(): Promise<void> {
+    this.dataStatus.set(null);
+    this.dataBusy.set(true);
+    try {
+      const blob = await this.api.exportData();
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = `ochemate-export-${new Date().toISOString().slice(0, 10)}.json`;
+      link.click();
+      setTimeout(() => URL.revokeObjectURL(link.href), 10_000);
+      this.dataStatus.set({ kind: 'ok', text: 'Export downloaded.' });
+    } catch {
+      this.dataStatus.set({ kind: 'warn', text: 'The export failed. Is the server reachable?' });
+    } finally {
+      this.dataBusy.set(false);
+    }
+  }
+
+  protected async importPicked(e: Event): Promise<void> {
+    const input = e.target as HTMLInputElement;
+    const file = input.files?.[0];
+    input.value = '';
+    if (!file) return;
+    this.dataStatus.set(null);
+    let data: { format?: unknown; version?: unknown; players?: unknown; matches?: unknown };
+    try {
+      data = JSON.parse(await file.text());
+    } catch {
+      return this.dataStatus.set({ kind: 'warn', text: 'That file is not an export file.' });
+    }
+    if (data?.format !== 'ochemate-export' || !Array.isArray(data.players) || !Array.isArray(data.matches)) {
+      return this.dataStatus.set({ kind: 'warn', text: 'That file is not an export file.' });
+    }
+    const summary = `${data.players.length} players and ${data.matches.length} matches`;
+    if (!confirm(`Import ${summary}?\n\nThis replaces ALL players and matches on this instance. This cannot be undone.`)) return;
+    this.dataBusy.set(true);
+    try {
+      await this.api.importData(data);
+      await this.profiles.refresh();
+      this.dataStatus.set({ kind: 'ok', text: `Imported ${summary}.` });
+    } catch (err) {
+      this.dataStatus.set({ kind: 'warn', text: this.importError(err) });
+    } finally {
+      this.dataBusy.set(false);
+    }
+  }
+
+  private importError(err: unknown): string {
+    switch ((err as { status?: number })?.status) {
+      case 400: return 'The server rejected the file: it is damaged or not a valid export. Nothing was changed.';
+      case 403: return 'Import is turned off on this server.';
+      case 413: return 'The file is too large to import.';
+      default: return 'The import failed. Nothing was changed if the server rejected it.';
+    }
   }
 
   protected setVolume(value: string): void {

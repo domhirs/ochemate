@@ -52,6 +52,7 @@ Environment variables for the server. With Docker, put them in a `.env` file nex
 
 | Variable | Default | Meaning |
 | --- | --- | --- |
+| `DATA_IMPORT` | `on` | `off` disables importing a data file (Settings > Data), which replaces all players and matches. Export stays available. **Set it to `off` for a public deployment.** Any value other than on/off counts as off. |
 | `VOICE_UPLOADS` | `on` | `off` makes the voice API read-only: no uploads, renames or deletes, and the Settings screen hides those controls. Existing voices still work. **Set it to `off` for a public deployment.** Any value other than on/off counts as off, so a typo never opens uploads. |
 | `PORT` | `8080` | Port the server listens on. |
 | `OCHEMATE_PORT` | `8080` | Docker only: host port the container is published on. Change it to run a second instance on the same host (the server inside the container keeps listening on 8080). |
