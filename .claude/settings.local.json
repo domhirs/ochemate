@@ -1,9 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "Bash(sed -i 's#^\\\\[Unreleased\\\\]: .*#[Unreleased]: https://github.com/domhirs/ochemate/compare/v0.4.0...HEAD\\\\n[0.4.0]: https://github.com/domhirs/ochemate/compare/v0.3.0...v0.4.0#' CHANGELOG.md)",
-      "Bash(git add *)",
-      "Bash(git commit -q -m 'chore: release 0.4.0 *)"
-    ]
-  }
-}
