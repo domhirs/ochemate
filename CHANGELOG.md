@@ -4,6 +4,8 @@ All notable changes to Ochemate. Format follows [Keep a Changelog](https://keepa
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-11-08
+
 ### Added
 
 - Data export and import under Settings > Data: download all players and matches as one JSON file, and upload it on another instance (new server, development copy). Import replaces all players and matches; voices and device settings are not included. `DATA_IMPORT=off` disables import.
@@ -42,7 +44,8 @@ All notable changes to Ochemate. Format follows [Keep a Changelog](https://keepa
 - Match history with stats, saved players, themes and custom voices.
 - Prebuilt image on GHCR with semver tags.
 
-[Unreleased]: https://github.com/domhirs/ochemate/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/domhirs/ochemate/compare/v0.4.0...HEAD
+[0.4.0]: https://github.com/domhirs/ochemate/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/domhirs/ochemate/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/domhirs/ochemate/compare/v0.1.1...v0.2.0
 [0.1.1]: https://github.com/domhirs/ochemate/compare/v0.1.0...v0.1.1
