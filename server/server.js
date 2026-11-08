@@ -5,6 +5,7 @@ import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import express from 'express';
 import { uploadsSetting, voiceRouter } from './voices.js';
+import { importSetting, transferRouter } from './transfer.js';
 
 const PORT = Number(process.env.PORT ?? 8080);
 const DB_PATH = process.env.DB_PATH ?? './data/dartboard.db';
@@ -64,6 +65,8 @@ function validMatch(body) {
 
 const app = express();
 app.disable('x-powered-by');
+// Mounted before the global JSON parser: an import file is far bigger than its 256kb limit.
+app.use('/api/transfer', transferRouter(db, { validMatch, cleanName }));
 app.use(express.json({ limit: '256kb' }));
 
 // Set by the image build (see Dockerfile), for example "develop abc1234". Null for local runs.
@@ -157,4 +160,7 @@ app.listen(PORT, () => {
   const uploads = uploadsSetting();
   console.log(`voice uploads: ${uploads.enabled ? 'on' : 'off'}`);
   if (uploads.invalid) console.warn(`VOICE_UPLOADS="${process.env.VOICE_UPLOADS}" is not on/off: treating it as off`);
+  const imports = importSetting();
+  console.log(`data import: ${imports.enabled ? 'on' : 'off'}`);
+  if (imports.invalid) console.warn(`DATA_IMPORT="${process.env.DATA_IMPORT}" is not on/off: treating it as off`);
 });
