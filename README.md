@@ -7,6 +7,8 @@
 
 Ochemate is a self-hosted dart scorer for usage on tablet or notebook. Tap the on-screen board to score.
 
+> **Prototype:** every 0.x.y version is a prototype, and it stays one. Expect rough edges, changing behaviour and data formats, and no stability promise between releases.
+
 - Games: X01 (301/501/701, double-in, straight/double/master-out, legs, sets and deciding-set tie-break), Cricket, Around the Clock
 - Checkout suggestions, 3-dart average, 180 counter, undo
 - Saved players with stats: matches, wins, 180s, averages, checkout %, best leg

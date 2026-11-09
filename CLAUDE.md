@@ -63,6 +63,10 @@ The in-app name, wordmark and tagline live in `client/src/app/brand.ts`. Everyth
 - Wordmark font if the lettering changes (`client/public/fonts/`, credit in README)
 - Do not rename the internal identifiers: `dartboard.*` localStorage keys, the `dartboard` Docker service, image and `dartboard-data` volume, `dartboard.db`. They are a generic namespace, not the product name, and changing them orphans stored data (browser state, the match history in the Docker volume).
 
+## Status
+
+Every 0.x.y version is a prototype and stays one (stated in the README). Do not describe the app as stable or production-ready.
+
 ## Git
 
 - Conventional Commits (`feat:`, `fix:`, `chore:`, `docs:`).
