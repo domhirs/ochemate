@@ -3,10 +3,27 @@ import { Api, MatchRecord } from './api';
 import { Heatmap } from './charts/heatmap';
 import { LineChart } from './charts/line-chart';
 import { Radar } from './charts/radar';
+import { TrendChart } from './charts/trend-chart';
 import { GameService } from './game.service';
-import { AdvancedStats, StatsKind, advancedStats, avg3, boardKey } from './player-stats';
+import { Mode } from './game-logic';
+import { AdvancedStats, StatsFilter, StatsKind, TREND_WINDOW, advancedStats, avg3, avgTrend, boardKey } from './player-stats';
 import { Profiles } from './profiles';
 import { takeaways } from './takeaways';
+
+const MODES: { id: Mode | 'all'; label: string }[] = [
+  { id: 'all', label: 'All modes' },
+  { id: 'x01', label: 'X01' },
+  { id: 'cricket', label: 'Cricket' },
+  { id: 'atc', label: 'Around the Clock' },
+];
+
+const PERIODS: { days: number | null; label: string }[] = [
+  { days: null, label: 'All time' },
+  { days: 90, label: '90 days' },
+  { days: 30, label: '30 days' },
+];
+
+const DAY = 86_400_000;
 
 const HITS: { label: string; n: number; m: number }[] = [
   { label: 'T20', n: 20, m: 3 },
@@ -21,7 +38,7 @@ const HITS: { label: string; n: number; m: number }[] = [
 
 @Component({
   selector: 'app-player-detail',
-  imports: [Heatmap, LineChart, Radar],
+  imports: [Heatmap, LineChart, Radar, TrendChart],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <section class="panel">
@@ -33,6 +50,16 @@ const HITS: { label: string; n: number; m: number }[] = [
         <button type="button" [class.on]="kind() === 'match'" (click)="kind.set('match')">Matches <small>{{ matchCount() }}</small></button>
         <button type="button" [class.on]="kind() === 'training'" (click)="kind.set('training')">Training <small>{{ trainingCount() }}</small></button>
       </div>
+      <div class="chips" role="group" aria-label="Game mode">
+        @for (m of modes; track m.id) {
+          <button type="button" [class.on]="mode() === m.id" (click)="mode.set(m.id)">{{ m.label }}</button>
+        }
+      </div>
+      <div class="chips" role="group" aria-label="Period">
+        @for (p of periods; track p.label) {
+          <button type="button" [class.on]="period() === p.days" (click)="period.set(p.days)">{{ p.label }}</button>
+        }
+      </div>
       @if (error()) {
         <p class="warn">Stats unavailable right now.</p>
       }
@@ -43,7 +70,7 @@ const HITS: { label: string; n: number; m: number }[] = [
     } @else if (stats(); as s) {
       @if (!s.base.matches) {
         <section class="panel">
-          <p class="muted">{{ kind() === 'match' ? 'No matches yet.' : 'No training yet. Start a game with only this player to train.' }}</p>
+          <p class="muted">{{ filtered() ? 'No games for this filter.' : kind() === 'match' ? 'No matches yet.' : 'No training yet. Start a game with only this player to train.' }}</p>
         </section>
       } @else {
         <section class="panel">
@@ -58,6 +85,26 @@ const HITS: { label: string; n: number; m: number }[] = [
             <div><b>{{ s.throws }}</b><span>Darts</span></div>
           </div>
         </section>
+
+        @if (mode() !== 'cricket' && mode() !== 'atc') {
+          <section class="panel">
+            <h3>Trend</h3>
+            <p class="muted sub">X01 3-dart average per game, moving average over the last {{ window }} games. Ignores the period.</p>
+            @if (trend().change; as c) {
+              <div class="delta" [class.up]="c.recent >= c.before" [class.down]="c.recent < c.before">
+                <b>{{ c.recent >= c.before ? '▲' : '▼' }} {{ signed(c.recent - c.before) }}</b>
+                <span>last {{ c.days }} days: {{ c.recent.toFixed(1) }} ({{ c.recentGames }} games) · before: {{ c.before.toFixed(1) }} ({{ c.beforeGames }} games)</span>
+              </div>
+            } @else {
+              <p class="muted">Change needs at least 3 X01 games in each of the last two 90-day periods.</p>
+            }
+            @if (trend().points.length >= 2) {
+              <app-trend-chart [points]="trend().points" />
+            } @else {
+              <p class="muted">Not enough X01 games yet.</p>
+            }
+          </section>
+        }
 
         <section class="panel">
           <h3>Takeaways</h3>
@@ -165,6 +212,13 @@ const HITS: { label: string; n: number; m: number }[] = [
     .back { min-height: 44px; padding: .5rem .9rem; flex: none; }
     .kind { display: flex; gap: .4rem; margin-top: .75rem; }
     .kind button { flex: 1; min-height: 44px; padding: .4rem .8rem; }
+    .chips { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: .5rem; }
+    .chips button { min-height: 44px; padding: .4rem .8rem; }
+    .delta { display: flex; flex-direction: column; margin-bottom: .75rem; }
+    .delta b { font-size: 1.4rem; font-variant-numeric: tabular-nums; }
+    .delta span { color: var(--muted); font-size: .85rem; }
+    .delta.up b { color: var(--accent); }
+    .delta.down b { color: var(--warn); }
     .kind small { color: var(--muted); margin-left: .3rem; font-variant-numeric: tabular-nums; }
     .muted { color: var(--muted); }
     .sub { margin: 0 0 .75rem; font-size: .85rem; }
@@ -207,6 +261,11 @@ export class PlayerDetail {
   private readonly profiles = inject(Profiles);
 
   protected readonly kind = signal<StatsKind>('match');
+  protected readonly modes = MODES;
+  protected readonly periods = PERIODS;
+  protected readonly window = TREND_WINDOW;
+  protected readonly mode = signal<Mode | 'all'>('all');
+  protected readonly period = signal<number | null>(null);
   protected readonly loading = signal(true);
   protected readonly error = signal(false);
   private readonly matches = signal<MatchRecord[]>([]);
@@ -214,10 +273,19 @@ export class PlayerDetail {
   private readonly id = computed(() => this.game.statsProfileId() ?? '');
   protected readonly name = computed(() => this.profiles.list().find((p) => p.id === this.id())?.name ?? 'Player');
 
+  protected readonly filtered = computed(() => this.mode() !== 'all' || this.period() !== null);
+
+  private readonly filter = computed<StatsFilter>(() => {
+    const days = this.period();
+    return { mode: this.mode(), since: days === null ? null : Date.now() - days * DAY };
+  });
+
   private readonly both = computed(() => ({
-    match: advancedStats(this.matches(), this.id(), 'match'),
-    training: advancedStats(this.matches(), this.id(), 'training'),
+    match: advancedStats(this.matches(), this.id(), 'match', this.filter()),
+    training: advancedStats(this.matches(), this.id(), 'training', this.filter()),
   }));
+
+  protected readonly trend = computed(() => avgTrend(this.matches(), this.id(), this.kind()));
 
   protected readonly matchCount = computed(() => this.both().match.base.matches);
   protected readonly trainingCount = computed(() => this.both().training.base.matches);
@@ -253,6 +321,10 @@ export class PlayerDetail {
 
   protected num(v: number | null): string {
     return v === null ? '–' : v.toFixed(1);
+  }
+
+  protected signed(v: number): string {
+    return (v >= 0 ? '+' : '−') + Math.abs(v).toFixed(1);
   }
 
   protected pct(part: number, whole: number): string {

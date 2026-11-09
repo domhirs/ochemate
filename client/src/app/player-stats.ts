@@ -1,5 +1,5 @@
 import { MatchRecord } from './api';
-import { Dart, MatchConfig, applyDart, checkoutRoutes, newState } from './game-logic';
+import { Dart, MatchConfig, Mode, applyDart, checkoutRoutes, newState } from './game-logic';
 
 export interface PlayerStats {
   matches: number;
@@ -262,8 +262,90 @@ export function finishingDouble(remaining: number): number | null {
   return remaining >= 2 && remaining <= 40 && remaining % 2 === 0 ? remaining / 2 : null;
 }
 
+/** Narrows the games an advanced stats run looks at. Matches without a finish time never pass a `since` bound. */
+export interface StatsFilter {
+  mode: Mode | 'all';
+  /** Only games finished at or after this time (ms since epoch). */
+  since: number | null;
+}
+
+export const NO_FILTER: StatsFilter = { mode: 'all', since: null };
+
+const finishedMs = (m: MatchRecord): number | null => {
+  const t = m.finishedAt ? Date.parse(m.finishedAt) : NaN;
+  return Number.isNaN(t) ? null : t;
+};
+
+const passes = (m: MatchRecord, f: StatsFilter): boolean => {
+  if (f.mode !== 'all' && m.config.mode !== f.mode) return false;
+  if (f.since === null) return true;
+  const t = finishedMs(m);
+  return t !== null && t >= f.since;
+};
+
+export interface TrendPoint {
+  /** Finish time, ms since epoch. */
+  t: number;
+  /** 3-dart average of this game. */
+  avg: number;
+  /** Dart-weighted 3-dart average over this and the previous games (moving average). */
+  ma: number;
+}
+
+export interface Trend {
+  points: TrendPoint[];
+  /** Average of the last `days` against the `days` before, null when either side has too little data. */
+  change: { days: number; recent: number; before: number; recentGames: number; beforeGames: number } | null;
+}
+
+/** Games in the moving average window. */
+export const TREND_WINDOW = 10;
+/** Fewer x01 games than this in a window make the comparison meaningless. */
+const MIN_TREND_GAMES = 3;
+
+/** 3-dart average per x01 game over time with a moving average, and the change over the last `days` days. */
+export function avgTrend(matches: MatchRecord[], profileId: string, kind: StatsKind, days = 90, now = Date.now()): Trend {
+  const games: { t: number; points: number; darts: number }[] = [];
+  for (const m of matches) {
+    const t = finishedMs(m);
+    if (t === null || m.config.mode !== 'x01' || !ofKind(m, kind)) continue;
+    const index = m.config.playerIds?.indexOf(profileId) ?? -1;
+    if (index < 0) continue;
+    let points = 0;
+    let darts = 0;
+    for (const v of analyzeMatch(m.config, m.darts).visits) {
+      if (v.player !== index) continue;
+      points += v.total;
+      darts += v.darts;
+    }
+    if (darts) games.push({ t, points, darts });
+  }
+  games.sort((a, b) => a.t - b.t);
+
+  const sum = (g: { points: number; darts: number }[]) => avg3(g.reduce((n, x) => n + x.points, 0), g.reduce((n, x) => n + x.darts, 0));
+  const points = games.map((g, i) => ({
+    t: g.t,
+    avg: avg3(g.points, g.darts)!,
+    ma: sum(games.slice(Math.max(0, i - TREND_WINDOW + 1), i + 1))!,
+  }));
+
+  const span = days * 86_400_000;
+  const recent = games.filter((x) => x.t >= now - span);
+  const before = games.filter((x) => x.t >= now - 2 * span && x.t < now - span);
+  const change =
+    recent.length >= MIN_TREND_GAMES && before.length >= MIN_TREND_GAMES
+      ? { days, recent: sum(recent)!, before: sum(before)!, recentGames: recent.length, beforeGames: before.length }
+      : null;
+  return { points, change };
+}
+
 /** Everything the advanced stats page shows for one saved player, from games of one kind. */
-export function advancedStats(matches: MatchRecord[], profileId: string, kind: StatsKind): AdvancedStats {
+export function advancedStats(
+  matches: MatchRecord[],
+  profileId: string,
+  kind: StatsKind,
+  filter: StatsFilter = NO_FILTER,
+): AdvancedStats {
   const base = emptyStats();
   const board = new Map<string, number>();
   const doubles = new Map<number, DoubleStat>();
@@ -276,7 +358,7 @@ export function advancedStats(matches: MatchRecord[], profileId: string, kind: S
   const scoring = { visits: 0, sixtyPlus: 0, tonPlus: 0 };
 
   for (const m of matches) {
-    if (!ofKind(m, kind)) continue;
+    if (!ofKind(m, kind) || !passes(m, filter)) continue;
     const index = m.config.playerIds?.indexOf(profileId) ?? -1;
     if (index < 0) continue;
     const a = analyzeMatch(m.config, m.darts);
